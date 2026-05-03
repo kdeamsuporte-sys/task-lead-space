@@ -58,10 +58,10 @@ export function PortalSidebar({ onNavigate }: { onNavigate?: () => void }) {
   const displayName = (user?.user_metadata as any)?.display_name || user?.email?.split("@")[0] || "Você";
 
   return (
-    <aside className={cn("group/side flex shrink-0 flex-col border-r border-sidebar-border bg-sidebar/95 backdrop-blur-xl transition-[width] duration-200 h-screen sticky top-0 z-30", w)}>
+    <aside className={cn("group/side flex shrink-0 flex-col border-r border-sidebar-border glass-strong transition-[width] duration-200 h-screen sticky top-0 z-30", w)}>
       {/* Brand */}
       <div className={cn("flex items-center gap-2 px-3 py-3 border-b border-sidebar-border", collapsed && "justify-center")}>
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl text-primary-foreground font-black shrink-0" style={{ background: "var(--gradient-primary)" }}>A</div>
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl text-primary-foreground font-black shrink-0 glow-soft" style={{ background: "var(--gradient-primary)" }}>A</div>
         {!collapsed && (
           <div className="min-w-0 flex-1">
             <div className="text-[11px] font-black tracking-[0.18em] uppercase">ALTUM</div>
@@ -114,7 +114,7 @@ export function PortalSidebar({ onNavigate }: { onNavigate?: () => void }) {
                     title={collapsed ? it.label : undefined}
                     className={cn(
                       "group relative flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[12.5px] font-semibold transition",
-                      active ? "bg-primary/12 text-primary ring-1 ring-primary/25" : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-foreground",
+                      active ? "bg-primary/12 text-primary ring-1 ring-primary/30 glow-soft" : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-foreground",
                       collapsed && "justify-center"
                     )}
                   >
