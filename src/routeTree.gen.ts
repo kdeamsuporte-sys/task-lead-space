@@ -9,18 +9,29 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TransferenciasRouteImport } from './routes/transferencias'
 import { Route as RetornosRouteImport } from './routes/retornos'
 import { Route as RelatoriosRouteImport } from './routes/relatorios'
 import { Route as PipelineRouteImport } from './routes/pipeline'
 import { Route as PerdidosRouteImport } from './routes/perdidos'
 import { Route as OrcamentosRouteImport } from './routes/orcamentos'
+import { Route as OperacaoInstagramRouteImport } from './routes/operacao-instagram'
+import { Route as MetricasRouteImport } from './routes/metricas'
+import { Route as LogsRouteImport } from './routes/logs'
+import { Route as LancamentoRouteImport } from './routes/lancamento'
 import { Route as InboxRouteImport } from './routes/inbox'
+import { Route as ConversasRouteImport } from './routes/conversas'
 import { Route as ContatosRouteImport } from './routes/contatos'
 import { Route as AutomacoesRouteImport } from './routes/automacoes'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AgendaRouteImport } from './routes/agenda'
 import { Route as IndexRouteImport } from './routes/index'
 
+const TransferenciasRoute = TransferenciasRouteImport.update({
+  id: '/transferencias',
+  path: '/transferencias',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RetornosRoute = RetornosRouteImport.update({
   id: '/retornos',
   path: '/retornos',
@@ -46,9 +57,34 @@ const OrcamentosRoute = OrcamentosRouteImport.update({
   path: '/orcamentos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OperacaoInstagramRoute = OperacaoInstagramRouteImport.update({
+  id: '/operacao-instagram',
+  path: '/operacao-instagram',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MetricasRoute = MetricasRouteImport.update({
+  id: '/metricas',
+  path: '/metricas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LogsRoute = LogsRouteImport.update({
+  id: '/logs',
+  path: '/logs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LancamentoRoute = LancamentoRouteImport.update({
+  id: '/lancamento',
+  path: '/lancamento',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const InboxRoute = InboxRouteImport.update({
   id: '/inbox',
   path: '/inbox',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConversasRoute = ConversasRouteImport.update({
+  id: '/conversas',
+  path: '/conversas',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContatosRoute = ContatosRouteImport.update({
@@ -83,12 +119,18 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/automacoes': typeof AutomacoesRoute
   '/contatos': typeof ContatosRoute
+  '/conversas': typeof ConversasRoute
   '/inbox': typeof InboxRoute
+  '/lancamento': typeof LancamentoRoute
+  '/logs': typeof LogsRoute
+  '/metricas': typeof MetricasRoute
+  '/operacao-instagram': typeof OperacaoInstagramRoute
   '/orcamentos': typeof OrcamentosRoute
   '/perdidos': typeof PerdidosRoute
   '/pipeline': typeof PipelineRoute
   '/relatorios': typeof RelatoriosRoute
   '/retornos': typeof RetornosRoute
+  '/transferencias': typeof TransferenciasRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -96,12 +138,18 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/automacoes': typeof AutomacoesRoute
   '/contatos': typeof ContatosRoute
+  '/conversas': typeof ConversasRoute
   '/inbox': typeof InboxRoute
+  '/lancamento': typeof LancamentoRoute
+  '/logs': typeof LogsRoute
+  '/metricas': typeof MetricasRoute
+  '/operacao-instagram': typeof OperacaoInstagramRoute
   '/orcamentos': typeof OrcamentosRoute
   '/perdidos': typeof PerdidosRoute
   '/pipeline': typeof PipelineRoute
   '/relatorios': typeof RelatoriosRoute
   '/retornos': typeof RetornosRoute
+  '/transferencias': typeof TransferenciasRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -110,12 +158,18 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/automacoes': typeof AutomacoesRoute
   '/contatos': typeof ContatosRoute
+  '/conversas': typeof ConversasRoute
   '/inbox': typeof InboxRoute
+  '/lancamento': typeof LancamentoRoute
+  '/logs': typeof LogsRoute
+  '/metricas': typeof MetricasRoute
+  '/operacao-instagram': typeof OperacaoInstagramRoute
   '/orcamentos': typeof OrcamentosRoute
   '/perdidos': typeof PerdidosRoute
   '/pipeline': typeof PipelineRoute
   '/relatorios': typeof RelatoriosRoute
   '/retornos': typeof RetornosRoute
+  '/transferencias': typeof TransferenciasRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -125,12 +179,18 @@ export interface FileRouteTypes {
     | '/auth'
     | '/automacoes'
     | '/contatos'
+    | '/conversas'
     | '/inbox'
+    | '/lancamento'
+    | '/logs'
+    | '/metricas'
+    | '/operacao-instagram'
     | '/orcamentos'
     | '/perdidos'
     | '/pipeline'
     | '/relatorios'
     | '/retornos'
+    | '/transferencias'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -138,12 +198,18 @@ export interface FileRouteTypes {
     | '/auth'
     | '/automacoes'
     | '/contatos'
+    | '/conversas'
     | '/inbox'
+    | '/lancamento'
+    | '/logs'
+    | '/metricas'
+    | '/operacao-instagram'
     | '/orcamentos'
     | '/perdidos'
     | '/pipeline'
     | '/relatorios'
     | '/retornos'
+    | '/transferencias'
   id:
     | '__root__'
     | '/'
@@ -151,12 +217,18 @@ export interface FileRouteTypes {
     | '/auth'
     | '/automacoes'
     | '/contatos'
+    | '/conversas'
     | '/inbox'
+    | '/lancamento'
+    | '/logs'
+    | '/metricas'
+    | '/operacao-instagram'
     | '/orcamentos'
     | '/perdidos'
     | '/pipeline'
     | '/relatorios'
     | '/retornos'
+    | '/transferencias'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -165,16 +237,29 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   AutomacoesRoute: typeof AutomacoesRoute
   ContatosRoute: typeof ContatosRoute
+  ConversasRoute: typeof ConversasRoute
   InboxRoute: typeof InboxRoute
+  LancamentoRoute: typeof LancamentoRoute
+  LogsRoute: typeof LogsRoute
+  MetricasRoute: typeof MetricasRoute
+  OperacaoInstagramRoute: typeof OperacaoInstagramRoute
   OrcamentosRoute: typeof OrcamentosRoute
   PerdidosRoute: typeof PerdidosRoute
   PipelineRoute: typeof PipelineRoute
   RelatoriosRoute: typeof RelatoriosRoute
   RetornosRoute: typeof RetornosRoute
+  TransferenciasRoute: typeof TransferenciasRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/transferencias': {
+      id: '/transferencias'
+      path: '/transferencias'
+      fullPath: '/transferencias'
+      preLoaderRoute: typeof TransferenciasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/retornos': {
       id: '/retornos'
       path: '/retornos'
@@ -210,11 +295,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrcamentosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/operacao-instagram': {
+      id: '/operacao-instagram'
+      path: '/operacao-instagram'
+      fullPath: '/operacao-instagram'
+      preLoaderRoute: typeof OperacaoInstagramRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/metricas': {
+      id: '/metricas'
+      path: '/metricas'
+      fullPath: '/metricas'
+      preLoaderRoute: typeof MetricasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/logs': {
+      id: '/logs'
+      path: '/logs'
+      fullPath: '/logs'
+      preLoaderRoute: typeof LogsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lancamento': {
+      id: '/lancamento'
+      path: '/lancamento'
+      fullPath: '/lancamento'
+      preLoaderRoute: typeof LancamentoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/inbox': {
       id: '/inbox'
       path: '/inbox'
       fullPath: '/inbox'
       preLoaderRoute: typeof InboxRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/conversas': {
+      id: '/conversas'
+      path: '/conversas'
+      fullPath: '/conversas'
+      preLoaderRoute: typeof ConversasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contatos': {
@@ -261,13 +381,28 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   AutomacoesRoute: AutomacoesRoute,
   ContatosRoute: ContatosRoute,
+  ConversasRoute: ConversasRoute,
   InboxRoute: InboxRoute,
+  LancamentoRoute: LancamentoRoute,
+  LogsRoute: LogsRoute,
+  MetricasRoute: MetricasRoute,
+  OperacaoInstagramRoute: OperacaoInstagramRoute,
   OrcamentosRoute: OrcamentosRoute,
   PerdidosRoute: PerdidosRoute,
   PipelineRoute: PipelineRoute,
   RelatoriosRoute: RelatoriosRoute,
   RetornosRoute: RetornosRoute,
+  TransferenciasRoute: TransferenciasRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
