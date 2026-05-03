@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Calendar, ChevronRight, Clock, MapPin, MessageCircle, CheckCircle2, Plus } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
@@ -9,26 +9,55 @@ import { cn } from "@/lib/utils";
 
 type Item = { id: string; type: "ag" | "ret"; time: string; title: string; subtitle: string; phone?: string | null; status: string; raw: any };
 
+const timeFmt = new Intl.DateTimeFormat("pt-BR", {
+  hour: "2-digit",
+  minute: "2-digit",
+  timeZone: "America/Sao_Paulo",
+});
+
+const dateFmt = new Intl.DateTimeFormat("pt-BR", {
+  day: "2-digit",
+  month: "long",
+  weekday: "long",
+  timeZone: "America/Sao_Paulo",
+});
+
+function getNowLabel() {
+  const now = new Date();
+  return {
+    today: dateFmt.format(now),
+    hhmm: timeFmt.format(now),
+  };
+}
+
 export function ScheduleBar() {
   const navigate = useNavigate();
   const [dlg, setDlg] = useState(false);
+  const [nowLabel, setNowLabel] = useState({ today: "Hoje", hhmm: "--:--" });
   const { data: appts = [] } = useAppointments("hoje");
   const { data: followups = [] } = useFollowups("hoje");
   const updAppt = useUpdateAppointmentStatus();
   const compFu = useCompleteFollowup();
 
+  useEffect(() => {
+    const sync = () => setNowLabel(getNowLabel());
+    sync();
+    const id = window.setInterval(sync, 60_000);
+    return () => window.clearInterval(id);
+  }, []);
+
   const items: Item[] = useMemo(() => {
     const list: Item[] = [
       ...appts.map((a: any) => ({
         id: a.id, type: "ag" as const,
-        time: new Date(a.scheduled_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }),
+        time: timeFmt.format(new Date(a.scheduled_at)),
         title: a.contact?.name ?? "Agendamento",
         subtitle: a.service ?? a.address ?? "—",
         phone: a.contact?.phone, status: a.status, raw: a,
       })),
       ...followups.map((f: any) => ({
         id: f.id, type: "ret" as const,
-        time: f.scheduled_at ? new Date(f.scheduled_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : "—",
+        time: f.scheduled_at ? timeFmt.format(new Date(f.scheduled_at)) : "—",
         title: f.contact?.name ?? "Retorno",
         subtitle: f.reason ?? "Follow-up",
         phone: f.contact?.phone, status: f.status, raw: f,
@@ -36,10 +65,6 @@ export function ScheduleBar() {
     ];
     return list.sort((a, b) => a.time.localeCompare(b.time));
   }, [appts, followups]);
-
-  const now = new Date();
-  const today = now.toLocaleDateString("pt-BR", { day: "2-digit", month: "long", weekday: "long" });
-  const hhmm = now.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
 
   const onWa = (phone?: string | null, name?: string) => {
     const link = whatsappLink(phone, name ? `Olá ${name.split(" ")[0]}, tudo bem?` : undefined);
@@ -63,15 +88,15 @@ export function ScheduleBar() {
                   <span className="h-1.5 w-1.5 rounded-full bg-success pulse-dot" /> ao vivo
                 </span>
               </div>
-              <h2 className="text-base sm:text-lg font-bold tracking-tight capitalize">{today}</h2>
+              <h2 className="text-base sm:text-lg font-bold tracking-tight capitalize">{nowLabel.today}</h2>
               <div className="mt-0.5 text-[11px] sm:text-xs text-muted-foreground">
                 <span className="font-semibold text-foreground">{items.length} ações</span> programadas
               </div>
             </div>
           </div>
           <div className="flex w-full items-center gap-2 sm:w-auto">
-            <div className="hidden items-center gap-1.5 rounded-full border border-border bg-card/60 px-3 py-1.5 text-[11px] font-medium text-muted-foreground md:inline-flex">
-              <Clock className="h-3 w-3" /> {hhmm}
+              <div className="hidden items-center gap-1.5 rounded-full border border-border bg-card/60 px-3 py-1.5 text-[11px] font-medium text-muted-foreground md:inline-flex">
+                <Clock className="h-3 w-3" /> {nowLabel.hhmm}
             </div>
             <button onClick={() => setDlg(true)} className="flex h-10 items-center justify-center gap-2 rounded-full border border-border bg-card px-3 text-xs font-semibold">
               <Plus className="h-3.5 w-3.5" /> Novo
