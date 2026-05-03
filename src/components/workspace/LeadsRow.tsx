@@ -15,15 +15,15 @@ const tempMap: Record<string, { label: string; cls: string; dots: number }> = {
 const filters = ["Todos", "Quente", "Morno", "Frio"] as const;
 type Filter = typeof filters[number];
 
-const STAGE_OPTS = [
+const STAGE_OPTS: { id: string; label: string; stages: string[] }[] = [
   { id: "abertos", label: "Abertos", stages: ["novo_lead","aguardando_info"] },
   { id: "novo_lead", label: "Novos", stages: ["novo_lead"] },
   { id: "aguardando_info", label: "Aguardando info", stages: ["aguardando_info"] },
   { id: "orcamento_enviado", label: "Orçamento", stages: ["orcamento_enviado"] },
   { id: "followup", label: "Follow-up", stages: ["followup"] },
   { id: "agendado", label: "Agendado", stages: ["agendado"] },
-] as const;
-type StageId = typeof STAGE_OPTS[number]["id"];
+];
+type StageId = string;
 
 const SORT_OPTS = [
   { id: "recente", label: "Recência" },
