@@ -118,7 +118,7 @@ export function PortalSidebar({ onNavigate }: { onNavigate?: () => void }) {
                       collapsed && "justify-center"
                     )}
                   >
-                    {active && <span className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r bg-primary" />}
+                    {active && <span className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r bg-primary glow-primary" />}
                     <it.icon className="h-[16px] w-[16px] shrink-0" />
                     {!collapsed && <span className="flex-1 truncate">{it.label}</span>}
                     {!collapsed && it.badge && (
