@@ -139,6 +139,50 @@
   color-scheme: dark;
 }
 
+/* ALTUM theme: light mode */
+.theme-light {
+  color-scheme: light;
+  --background: oklch(0.985 0.005 250);
+  --foreground: oklch(0.18 0.012 250);
+  --surface-1: oklch(0.97 0.006 250);
+  --surface-2: oklch(0.95 0.008 250);
+  --surface-3: oklch(0.92 0.01 250);
+  --surface-4: oklch(0.88 0.012 250);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.18 0.012 250);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.18 0.012 250);
+  --secondary: oklch(0.94 0.008 250);
+  --secondary-foreground: oklch(0.2 0.012 250);
+  --muted: oklch(0.95 0.008 250);
+  --muted-foreground: oklch(0.45 0.018 250);
+  --accent: oklch(0.94 0.008 250);
+  --accent-foreground: oklch(0.2 0.012 250);
+  --border: oklch(0.88 0.012 250);
+  --border-soft: oklch(0.93 0.01 250);
+  --input: oklch(0.94 0.01 250);
+  --sidebar: oklch(0.97 0.006 250);
+  --sidebar-foreground: oklch(0.22 0.012 250);
+  --sidebar-accent: oklch(0.93 0.01 250);
+  --sidebar-accent-foreground: oklch(0.18 0.012 250);
+  --sidebar-border: oklch(0.88 0.012 250);
+  --gradient-card: linear-gradient(180deg, oklch(1 0 0), oklch(0.97 0.006 250));
+  --gradient-elevated: linear-gradient(180deg, oklch(1 0 0 / 0.95), oklch(0.97 0.006 250 / 0.85));
+  --gradient-radial-primary: radial-gradient(800px 380px at 0% 0%, oklch(0.72 0.205 38 / 0.10), transparent 60%);
+  --shadow-card: 0 1px 0 0 oklch(1 0 0 / 0.7) inset, 0 6px 20px -10px oklch(0.18 0.012 250 / 0.18);
+  --shadow-elevated: 0 1px 0 0 oklch(1 0 0 / 0.8) inset, 0 20px 60px -25px oklch(0.18 0.012 250 / 0.18);
+}
+.theme-light body {
+  background-image:
+    radial-gradient(900px 420px at 88% -12%, oklch(0.72 0.205 38 / 0.06), transparent 60%),
+    linear-gradient(180deg, oklch(0.985 0.005 250), oklch(0.965 0.005 250));
+}
+.theme-light body::before { display: none; }
+
+/* ALTUM density modes (essencial vs conforto) */
+.ui-essencial { --portal-density: 0.92; }
+.ui-conforto  { --portal-density: 1; }
+
 @layer base {
   * {
     border-color: var(--color-border);
