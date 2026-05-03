@@ -228,7 +228,7 @@ export function useTasks(filter: "todas" | "hoje" | "atrasadas" | "concluidas" =
         if (filter === "todas") return true;
         if (filter === "concluidas") return t.status === "concluida";
         if (t.status === "concluida") return false;
-        if (!t.due_at) return filter === "todas";
+        if (!t.due_at) return false;
         const d = new Date(t.due_at);
         if (filter === "hoje") return d >= start && d <= end;
         if (filter === "atrasadas") return d < start;
