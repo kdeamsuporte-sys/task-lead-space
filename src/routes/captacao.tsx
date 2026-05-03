@@ -73,7 +73,7 @@ function Page() {
   return (
     <CRMLayout>
       <div className="space-y-6">
-        <CRMPageHeader
+        <div className="ambient-glow"><CRMPageHeader
           eyebrow="Captação"
           title="Geração de leads"
           description="Crie leads, ative canais e acompanhe os agendamentos relacionados."
@@ -83,7 +83,7 @@ function Page() {
               <button onClick={() => setContactOpen(true)} className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold text-primary-foreground glow-primary" style={{ background: "var(--gradient-primary)" }}><UserPlus className="h-3.5 w-3.5" /> Novo lead</button>
             </>
           }
-        />
+        /></div>
 
         {isLoading || !data ? (
           <div className="flex justify-center py-10"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
