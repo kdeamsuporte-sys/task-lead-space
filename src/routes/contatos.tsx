@@ -75,13 +75,13 @@ function ContatosPage() {
             description="Lista real, busca e ficha 360º conectada ao banco."
             actions={
               <>
-                <div className="flex items-center gap-2 rounded-full border border-border bg-card/70 px-3 py-1.5">
+                <div className="flex w-full sm:w-auto items-center gap-2 rounded-full border border-border bg-card/70 px-3 py-1.5">
                   <Search className="h-3.5 w-3.5 text-muted-foreground" />
                   <input
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Nome, telefone, e-mail, empresa…"
-                    className="w-56 bg-transparent text-xs outline-none placeholder:text-muted-foreground"
+                    className="w-full sm:w-56 bg-transparent text-xs outline-none placeholder:text-muted-foreground"
                   />
                 </div>
                 <button

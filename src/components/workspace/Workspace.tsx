@@ -13,7 +13,7 @@ export function Workspace() {
   const navigate = useNavigate();
   return (
     <div className="flex gap-6">
-      <div className="min-w-0 flex-1 space-y-6">
+      <div className="min-w-0 flex-1 space-y-4 sm:space-y-6">
         <CRMPageHeader
           eyebrow="CRM Comercial"
           title="Workspace"

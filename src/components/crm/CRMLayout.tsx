@@ -191,9 +191,9 @@ export function CRMLayout({ children }: { children: React.ReactNode }) {
     <div className="relative flex min-h-screen w-full bg-background text-foreground">
       <DesktopSidebar />
       <MobileDrawer open={menu} onClose={() => setMenu(false)} />
-      <main className="relative z-10 min-w-0 flex-1 px-4 py-4 md:px-6 lg:px-8 pb-24 lg:pb-8">
+      <main className="relative z-10 min-w-0 flex-1 px-3 py-3 sm:px-4 sm:py-4 md:px-6 lg:px-8 pb-28 lg:pb-8">
         <CRMTopBar onOpenMenu={() => setMenu(true)} />
-        <div className="mt-6">{children}</div>
+        <div className="mt-4 sm:mt-6">{children}</div>
       </main>
       <CRMMobileBottomNav />
     </div>

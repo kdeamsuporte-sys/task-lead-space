@@ -34,33 +34,33 @@ function AutomacoesPage() {
 
         <div className="grid gap-3 md:grid-cols-2">
           {items.map((a) => (
-            <article key={a.id} className="glass-card ring-premium relative overflow-hidden rounded-2xl p-5">
+            <article key={a.id} className="glass-card ring-premium relative overflow-hidden rounded-2xl p-4 sm:p-5">
               <div className={`pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full blur-2xl transition ${a.active ? "bg-primary/15" : "bg-muted/15"}`} />
               <div className="relative flex items-start justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <div className={`flex h-11 w-11 items-center justify-center rounded-2xl ring-1 ${a.active ? "bg-primary/15 text-primary ring-primary/30" : "bg-muted/15 text-muted-foreground ring-border"}`}>
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className={`flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-2xl ring-1 ${a.active ? "bg-primary/15 text-primary ring-primary/30" : "bg-muted/15 text-muted-foreground ring-border"}`}>
                     <Zap className="h-5 w-5" />
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <div className="text-sm font-bold leading-tight">{a.name}</div>
                     <div className="mt-0.5 text-[11px] text-muted-foreground">{a.runs} execuções no mês</div>
                   </div>
                 </div>
                 <button
                   onClick={() => setItems((prev) => prev.map((p) => (p.id === a.id ? { ...p, active: !p.active } : p)))}
-                  className={`relative h-6 w-11 rounded-full transition ${a.active ? "bg-primary" : "bg-muted"}`}
+                  className={`relative h-6 w-11 shrink-0 rounded-full transition ${a.active ? "bg-primary" : "bg-muted"}`}
                   aria-pressed={a.active}
                 >
                   <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-background shadow-md transition-all ${a.active ? "left-[22px]" : "left-0.5"}`} />
                 </button>
               </div>
 
-              <p className="relative mt-3 text-xs text-foreground/80">{a.desc}</p>
+              <p className="relative mt-3 text-[11px] sm:text-xs text-foreground/80 leading-relaxed">{a.desc}</p>
 
-              <div className="relative mt-4 flex flex-wrap items-center gap-2 rounded-xl border border-border-soft bg-background/40 p-3">
-                <CRMStatusBadge tone="warning">Quando: {a.trigger}</CRMStatusBadge>
+              <div className="relative mt-4 flex flex-wrap items-center gap-2 rounded-xl border border-border-soft bg-background/40 p-2.5 sm:p-3">
+                <CRMStatusBadge tone="warning" size="xs">Quando: {a.trigger}</CRMStatusBadge>
                 <ArrowRight className="h-3 w-3 text-muted-foreground" />
-                <CRMStatusBadge tone="primary">Faz: {a.action}</CRMStatusBadge>
+                <CRMStatusBadge tone="primary" size="xs">Faz: {a.action}</CRMStatusBadge>
               </div>
 
               <div className="relative mt-4 flex items-center justify-between">

@@ -39,9 +39,9 @@ function InboxPage() {
           title="Fila de atendimento"
           description="Quem precisa ser atendido agora? Cards organizados por urgência, com a próxima ação recomendada."
           actions={
-            <div className="flex items-center gap-2 rounded-full border border-border bg-card/70 px-3 py-1.5">
+            <div className="flex w-full sm:w-auto items-center gap-2 rounded-full border border-border bg-card/70 px-3 py-1.5">
               <Search className="h-3.5 w-3.5 text-muted-foreground" />
-              <input placeholder="Buscar na inbox…" className="w-48 bg-transparent text-xs outline-none placeholder:text-muted-foreground" />
+              <input placeholder="Buscar na inbox…" className="w-full sm:w-48 bg-transparent text-xs outline-none placeholder:text-muted-foreground" />
             </div>
           }
         />
@@ -53,9 +53,9 @@ function InboxPage() {
             const tone = l.temperature === "quente" ? "primary" : l.temperature === "morno" ? "warning" : "neutral";
             const urgentDays = l.daysIdle >= 3;
             return (
-              <article key={l.id} className="glass-card ring-premium group relative rounded-2xl p-4 transition hover:-translate-y-0.5 hover:border-primary/40">
+              <article key={l.id} className="glass-card ring-premium group relative rounded-2xl p-3 sm:p-4 transition hover:-translate-y-0.5 hover:border-primary/40">
                 {urgentDays && (
-                  <span className="absolute -top-2 left-4 inline-flex items-center gap-1 rounded-full border border-destructive/40 bg-destructive/15 px-2 py-0.5 text-[10px] font-bold text-destructive">
+                  <span className="absolute -top-2.5 left-3 inline-flex items-center gap-1 rounded-full border border-destructive/40 bg-destructive/15 px-2 py-0.5 text-[10px] font-bold text-destructive shadow-sm">
                     <AlertTriangle className="h-2.5 w-2.5" /> Atrasado
                   </span>
                 )}
