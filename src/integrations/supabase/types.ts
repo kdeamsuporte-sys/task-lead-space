@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      crm_ai_settings: {
+        Row: {
+          base_prompt: string | null
+          guardrails: Json
+          id: string
+          is_active: boolean
+          owner_id: string
+          tone: string | null
+          updated_at: string
+        }
+        Insert: {
+          base_prompt?: string | null
+          guardrails?: Json
+          id?: string
+          is_active?: boolean
+          owner_id: string
+          tone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          base_prompt?: string | null
+          guardrails?: Json
+          id?: string
+          is_active?: boolean
+          owner_id?: string
+          tone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       crm_appointments: {
         Row: {
           address: string | null
@@ -102,6 +132,150 @@ export type Database = {
           name?: string
           owner_id?: string
           trigger_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      crm_campaigns: {
+        Row: {
+          created_at: string
+          filters: Json
+          id: string
+          last_run_at: string | null
+          max_recipients: number
+          message: string
+          name: string
+          owner_id: string
+          runs_count: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          filters?: Json
+          id?: string
+          last_run_at?: string | null
+          max_recipients?: number
+          message?: string
+          name: string
+          owner_id: string
+          runs_count?: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          filters?: Json
+          id?: string
+          last_run_at?: string | null
+          max_recipients?: number
+          message?: string
+          name?: string
+          owner_id?: string
+          runs_count?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      crm_capture_forms: {
+        Row: {
+          collect_company: boolean
+          collect_message: boolean
+          created_at: string
+          cta_label: string | null
+          default_assignee: string | null
+          description: string | null
+          id: string
+          initial_message: string | null
+          initial_stage: Database["public"]["Enums"]["crm_stage"]
+          launcher_label: string | null
+          name: string
+          owner_id: string
+          require_email: boolean
+          require_phone: boolean
+          source: string | null
+          status: string
+          submissions_count: number
+          success_message: string | null
+          tags: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          collect_company?: boolean
+          collect_message?: boolean
+          created_at?: string
+          cta_label?: string | null
+          default_assignee?: string | null
+          description?: string | null
+          id?: string
+          initial_message?: string | null
+          initial_stage?: Database["public"]["Enums"]["crm_stage"]
+          launcher_label?: string | null
+          name: string
+          owner_id: string
+          require_email?: boolean
+          require_phone?: boolean
+          source?: string | null
+          status?: string
+          submissions_count?: number
+          success_message?: string | null
+          tags?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          collect_company?: boolean
+          collect_message?: boolean
+          created_at?: string
+          cta_label?: string | null
+          default_assignee?: string | null
+          description?: string | null
+          id?: string
+          initial_message?: string | null
+          initial_stage?: Database["public"]["Enums"]["crm_stage"]
+          launcher_label?: string | null
+          name?: string
+          owner_id?: string
+          require_email?: boolean
+          require_phone?: boolean
+          source?: string | null
+          status?: string
+          submissions_count?: number
+          success_message?: string | null
+          tags?: string[] | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      crm_channels: {
+        Row: {
+          config: Json
+          created_at: string
+          id: string
+          kind: string
+          last_sync_at: string | null
+          owner_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          config?: Json
+          created_at?: string
+          id?: string
+          kind: string
+          last_sync_at?: string | null
+          owner_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          config?: Json
+          created_at?: string
+          id?: string
+          kind?: string
+          last_sync_at?: string | null
+          owner_id?: string
+          status?: string
           updated_at?: string
         }
         Relationships: []
@@ -304,6 +478,105 @@ export type Database = {
           },
         ]
       }
+      crm_handoffs: {
+        Row: {
+          contact_id: string | null
+          created_at: string
+          from_agent: string
+          id: string
+          owner_id: string
+          reason: string | null
+          resolved_at: string | null
+          status: string
+          to_user: string | null
+        }
+        Insert: {
+          contact_id?: string | null
+          created_at?: string
+          from_agent?: string
+          id?: string
+          owner_id: string
+          reason?: string | null
+          resolved_at?: string | null
+          status?: string
+          to_user?: string | null
+        }
+        Update: {
+          contact_id?: string | null
+          created_at?: string
+          from_agent?: string
+          id?: string
+          owner_id?: string
+          reason?: string | null
+          resolved_at?: string | null
+          status?: string
+          to_user?: string | null
+        }
+        Relationships: []
+      }
+      crm_kb_docs: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          owner_id: string
+          tags: string[] | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content?: string
+          created_at?: string
+          id?: string
+          owner_id: string
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          owner_id?: string
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      crm_launch_checklist: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          due_at: string | null
+          id: string
+          item: string
+          owner_id: string
+          position: number
+          status: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          due_at?: string | null
+          id?: string
+          item: string
+          owner_id: string
+          position?: number
+          status?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          due_at?: string | null
+          id?: string
+          item?: string
+          owner_id?: string
+          position?: number
+          status?: string
+        }
+        Relationships: []
+      }
       crm_lost_reasons: {
         Row: {
           created_at: string
@@ -322,6 +595,33 @@ export type Database = {
           id?: string
           label?: string
           owner_id?: string
+        }
+        Relationships: []
+      }
+      crm_portal_prefs: {
+        Row: {
+          id: string
+          owner_id: string
+          sidebar_collapsed: boolean
+          theme: string
+          ui_mode: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          owner_id: string
+          sidebar_collapsed?: boolean
+          theme?: string
+          ui_mode?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          owner_id?: string
+          sidebar_collapsed?: boolean
+          theme?: string
+          ui_mode?: string
+          updated_at?: string
         }
         Relationships: []
       }

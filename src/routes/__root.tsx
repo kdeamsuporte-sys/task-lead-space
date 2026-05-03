@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/lib/auth-context";
+import { PortalProvider } from "@/lib/portal-context";
 
 import appCss from "../styles.css?url";
 
@@ -77,8 +78,10 @@ function RootComponent() {
   return (
     <QueryClientProvider client={client}>
       <AuthProvider>
-        {mounted ? <Outlet /> : <div className="min-h-screen bg-background" />}
-        <Toaster />
+        <PortalProvider>
+          {mounted ? <Outlet /> : <div className="min-h-screen bg-background" />}
+          <Toaster />
+        </PortalProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
