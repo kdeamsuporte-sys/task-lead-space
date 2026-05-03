@@ -55,22 +55,22 @@ export function TasksRow() {
             <article
               key={t.id}
               className={cn(
-                "glass-card group relative rounded-2xl border-l-[3px] p-4 transition hover:-translate-y-0.5",
+                "glass-card group relative rounded-2xl border-l-[3px] p-3 sm:p-4 transition hover:-translate-y-0.5",
                 priorityMap[t.priority],
                 t.highlight && "glow-orange",
               )}
             >
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/20">
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/20">
                     <Icon className="h-4 w-4" />
                   </div>
-                  <div>
-                    <div className="text-[11px] uppercase tracking-wider text-muted-foreground">{t.client} · {t.service}</div>
-                    <div className="text-base font-semibold leading-tight">{t.title}</div>
+                  <div className="min-w-0">
+                    <div className="truncate text-[10px] sm:text-[11px] uppercase tracking-wider text-muted-foreground">{t.client} · {t.service}</div>
+                    <div className="text-sm sm:text-base font-semibold leading-tight">{t.title}</div>
                   </div>
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex shrink-0 items-center gap-1">
                   <button className="flex h-7 w-7 items-center justify-center rounded-full border border-border bg-background/60 text-muted-foreground hover:text-foreground">
                     <Bell className="h-3.5 w-3.5" />
                   </button>
@@ -86,14 +86,14 @@ export function TasksRow() {
                 </div>
               )}
 
-              <div className="mt-4 flex items-center gap-2">
-                <button className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground hover:bg-primary/90">
+              <div className="mt-4 flex flex-wrap items-center gap-2">
+                <button className="flex flex-1 min-w-[140px] items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground hover:bg-primary/90 min-h-[40px]">
                   <Send className="h-3.5 w-3.5" /> {meta.primary}
                 </button>
-                <button className="flex items-center justify-center gap-1.5 rounded-lg border border-border bg-background/60 px-3 py-2 text-xs font-semibold text-foreground hover:bg-background">
+                <button className="flex items-center justify-center gap-1.5 rounded-lg border border-border bg-background/60 px-3 py-2 text-xs font-semibold text-foreground hover:bg-background min-h-[40px]">
                   <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
                 </button>
-                <button className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-background/60 text-muted-foreground hover:text-foreground">
+                <button className="flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-background/60 text-muted-foreground hover:text-foreground">
                   <Phone className="h-3.5 w-3.5" />
                 </button>
               </div>

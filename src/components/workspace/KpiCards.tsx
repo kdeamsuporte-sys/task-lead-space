@@ -44,7 +44,7 @@ export function KpiCards() {
         return (
           <button
             key={k.id}
-            className="glass-card shine ring-premium group relative overflow-hidden rounded-2xl p-4 text-left transition hover:-translate-y-0.5 hover:border-primary/40"
+            className="glass-card shine ring-premium group relative overflow-hidden rounded-2xl p-3 sm:p-4 text-left transition hover:-translate-y-0.5 hover:border-primary/40"
           >
             <div
               className={cn(
@@ -60,16 +60,16 @@ export function KpiCards() {
                 <ArrowUpRight className="h-2.5 w-2.5" /> {k.delta}
               </span>
             </div>
-            <div className="relative mt-5 flex items-end justify-between gap-2">
+            <div className="relative mt-4 sm:mt-5 flex items-end justify-between gap-2">
               <div>
-                <div className="text-3xl font-black tracking-tight tabular-nums">{k.value}</div>
-                <div className="mt-0.5 text-[13px] font-semibold text-foreground/90">{k.label}</div>
+                <div className="text-2xl sm:text-3xl font-black tracking-tight tabular-nums">{k.value}</div>
+                <div className="mt-0.5 text-[12px] sm:text-[13px] font-semibold text-foreground/90">{k.label}</div>
               </div>
-              <div className={tone.text}>
+              <div className={cn("hidden sm:block", tone.text)}>
                 <Spark data={sparks[k.id] ?? [1, 2, 3]} color={tone.text} />
               </div>
             </div>
-            <div className="relative mt-2 text-[11px] leading-snug text-muted-foreground">{k.hint}</div>
+            <div className="relative mt-2 text-[10px] sm:text-[11px] leading-snug text-muted-foreground line-clamp-2">{k.hint}</div>
           </button>
         );
       })}

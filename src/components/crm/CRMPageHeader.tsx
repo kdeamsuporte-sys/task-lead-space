@@ -12,20 +12,24 @@ export function CRMPageHeader({
   actions?: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-wrap items-end justify-between gap-4">
+    <div className="flex flex-col gap-3 md:flex-row md:flex-wrap md:items-end md:justify-between md:gap-4">
       <div className="min-w-0">
         <div className="flex items-center gap-2">
-          <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-primary/80">{eyebrow}</span>
+          <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.2em] sm:tracking-[0.22em] text-primary/80">{eyebrow}</span>
           <span className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/8 px-2 py-0.5 text-[10px] font-semibold text-primary">
             <Sparkles className="h-2.5 w-2.5" /> IA ativa
           </span>
         </div>
-        <h1 className="mt-2 text-3xl font-black tracking-tight md:text-[40px] md:leading-[1.05]">
+        <h1 className="mt-1.5 text-2xl font-black tracking-tight sm:text-3xl md:text-[40px] md:leading-[1.05]">
           {title}<span className="text-gradient-primary">.</span>
         </h1>
-        {description && <p className="mt-2 max-w-xl text-sm text-muted-foreground">{description}</p>}
+        {description && <p className="mt-1.5 max-w-xl text-xs sm:text-sm text-muted-foreground">{description}</p>}
       </div>
-      {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
+      {actions && (
+        <div className="flex flex-wrap items-center gap-2 [&>*]:min-h-[40px]">
+          {actions}
+        </div>
+      )}
     </div>
   );
 }
