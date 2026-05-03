@@ -89,7 +89,6 @@ export function ContactPanel({ contactId, onDeleted }: { contactId: string | nul
   };
 
   return (
-  return (
     <aside className="hidden w-[400px] shrink-0 xl:block">
       <div className="glass-elevated sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto rounded-[28px] p-5">
         {/* Header */}
