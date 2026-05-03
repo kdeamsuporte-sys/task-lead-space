@@ -50,7 +50,7 @@ function AgendaPage() {
             <ol className="relative space-y-3 sm:space-y-4 border-l-2 border-border-soft pl-5 sm:pl-6">
               {list.map((a: any) => {
                 const c = a.contact;
-                const tone = a.status === "cancelado" ? "danger" : a.status === "concluido" ? "success" : a.status === "confirmado" ? "primary" : "warning";
+                const tone = a.status === "cancelado" ? "danger" : a.status === "realizado" ? "success" : a.status === "confirmado" ? "primary" : "warning";
                 const onWa = () => {
                   const link = whatsappLink(c?.phone, c?.name ? `Olá ${c.name.split(" ")[0]}, confirmando nosso compromisso.` : "");
                   if (!link) return toast.error("Sem telefone válido");
@@ -58,7 +58,7 @@ function AgendaPage() {
                 };
                 return (
                   <li key={a.id} className="relative">
-                    <span className={`absolute -left-[26px] sm:-left-[31px] top-1 h-3.5 w-3.5 sm:h-4 sm:w-4 rounded-full ring-4 ring-background ${a.status === "cancelado" ? "bg-destructive" : a.status === "concluido" ? "bg-success" : a.status === "confirmado" ? "bg-primary" : "bg-warning"}`} />
+                    <span className={`absolute -left-[26px] sm:-left-[31px] top-1 h-3.5 w-3.5 sm:h-4 sm:w-4 rounded-full ring-4 ring-background ${a.status === "cancelado" ? "bg-destructive" : a.status === "realizado" ? "bg-success" : a.status === "confirmado" ? "bg-primary" : "bg-warning"}`} />
                     <div className="glass-card ring-premium rounded-2xl p-3 sm:p-4">
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div className="min-w-0">
@@ -73,10 +73,10 @@ function AgendaPage() {
                         </div>
                         <div className="flex w-full flex-wrap gap-2 sm:w-auto">
                           <button onClick={onWa} className="flex flex-1 sm:flex-none min-w-[110px] items-center justify-center gap-1.5 rounded-lg bg-success/15 px-3 py-2 text-xs font-bold text-success ring-1 ring-success/30 min-h-[40px]"><MessageCircle className="h-3.5 w-3.5" /> WhatsApp</button>
-                          {a.status !== "concluido" && (
+                          {a.status !== "realizado" && (
                             <>
                               <button onClick={async () => { try { await upd.mutateAsync({ id: a.id, status: "confirmado" }); toast.success("Confirmado"); } catch(e:any){toast.error(e?.message);} }} className="flex items-center justify-center gap-1.5 rounded-lg border border-border bg-background/60 px-3 py-2 text-xs font-bold min-h-[40px]"><Check className="h-3.5 w-3.5" /> Confirmar</button>
-                              <button onClick={async () => { try { await upd.mutateAsync({ id: a.id, status: "concluido" }); toast.success("Concluído"); } catch(e:any){toast.error(e?.message);} }} className="flex items-center justify-center gap-1.5 rounded-lg border border-border bg-background/60 px-3 py-2 text-xs font-bold min-h-[40px]">Concluir</button>
+                              <button onClick={async () => { try { await upd.mutateAsync({ id: a.id, status: "realizado" }); toast.success("Concluído"); } catch(e:any){toast.error(e?.message);} }} className="flex items-center justify-center gap-1.5 rounded-lg border border-border bg-background/60 px-3 py-2 text-xs font-bold min-h-[40px]">Concluir</button>
                             </>
                           )}
                           <button onClick={() => setDlg({ open: true, initial: a })} className="flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-background/60"><Pencil className="h-3.5 w-3.5" /></button>
