@@ -229,6 +229,60 @@
     box-shadow: var(--shadow-elevated);
     backdrop-filter: blur(12px);
   }
+  .glass {
+    background: color-mix(in oklab, var(--card) 55%, transparent);
+    border: 1px solid color-mix(in oklab, var(--border) 80%, transparent);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    box-shadow:
+      inset 0 1px 0 0 oklch(1 0 0 / 0.05),
+      0 12px 40px -18px oklch(0 0 0 / 0.55);
+  }
+  .glass-strong {
+    background: color-mix(in oklab, var(--card) 70%, transparent);
+    border: 1px solid color-mix(in oklab, var(--border) 100%, transparent);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    box-shadow:
+      inset 0 1px 0 0 oklch(1 0 0 / 0.07),
+      0 24px 60px -22px oklch(0 0 0 / 0.65);
+  }
+  .glow-primary {
+    box-shadow:
+      0 0 0 1px color-mix(in oklab, var(--primary) 30%, transparent),
+      0 10px 36px -10px color-mix(in oklab, var(--primary) 45%, transparent);
+  }
+  .glow-soft {
+    box-shadow:
+      0 0 0 1px color-mix(in oklab, var(--primary) 18%, transparent),
+      0 8px 24px -10px color-mix(in oklab, var(--primary) 28%, transparent);
+  }
+  .glow-accent::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, color-mix(in oklab, var(--primary) 50%, transparent), transparent 60%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    pointer-events: none;
+  }
+  .ambient-glow {
+    position: relative;
+    isolation: isolate;
+  }
+  .ambient-glow::after {
+    content: "";
+    position: absolute;
+    inset: -30% -10% auto -10%;
+    height: 60%;
+    background: radial-gradient(60% 100% at 50% 0%, color-mix(in oklab, var(--primary) 22%, transparent), transparent 70%);
+    z-index: -1;
+    pointer-events: none;
+    filter: blur(30px);
+  }
   .surface-1 { background-color: var(--surface-1); }
   .surface-2 { background-color: var(--surface-2); }
   .surface-3 { background-color: var(--surface-3); }
