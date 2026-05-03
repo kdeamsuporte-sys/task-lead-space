@@ -1,17 +1,17 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { LayoutGrid, Inbox, KanbanSquare, Calendar, Users } from "lucide-react";
+import { LayoutGrid, Inbox, KanbanSquare, Calendar, IdCard } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type Item = { to: string; icon: any; label: string; exact?: boolean };
 const items: Item[] = [
-  { to: "/", icon: LayoutGrid, label: "Workspace", exact: true },
+  { to: "/", icon: LayoutGrid, label: "Visão", exact: true },
   { to: "/inbox", icon: Inbox, label: "Inbox" },
+  // index 2 = CRM FAB (drawer trigger)
   { to: "/pipeline", icon: KanbanSquare, label: "Pipeline" },
   { to: "/agenda", icon: Calendar, label: "Agenda" },
-  { to: "/contatos", icon: Users, label: "Contatos" },
 ];
 
-export function CRMMobileBottomNav() {
+export function CRMMobileBottomNav({ onOpenCRM }: { onOpenCRM?: () => void }) {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const activeIndex = Math.max(
     0,
@@ -19,36 +19,25 @@ export function CRMMobileBottomNav() {
       it.exact ? path === it.to : path === it.to || path.startsWith(it.to + "/"),
     ),
   );
+  const slots = items.length + 1; // +1 for the central CRM FAB slot
   return (
     <nav className="lg:hidden fixed inset-x-0 bottom-0 z-40 px-3 pb-[max(env(safe-area-inset-bottom),10px)] pt-2 pointer-events-none">
       <div
-        className="pointer-events-auto relative mx-auto flex max-w-md items-stretch justify-between overflow-hidden rounded-2xl border border-border/60 bg-background/85 px-2 py-1.5 shadow-[0_10px_40px_-12px_rgba(0,0,0,0.45)] backdrop-blur-xl"
+        className="pointer-events-auto relative mx-auto flex max-w-md items-stretch justify-between rounded-2xl glass-strong px-2 py-1.5"
       >
-        {/* Spotlight glow follows the active item */}
+        {/* Spotlight glow follows the active item (skip middle FAB slot) */}
         <div
           aria-hidden
           className="pointer-events-none absolute top-0 h-full transition-all duration-500 ease-out"
           style={{
-            width: `${100 / items.length}%`,
-            left: `${(activeIndex * 100) / items.length}%`,
+            width: `${100 / slots}%`,
+            left: `${((activeIndex < 2 ? activeIndex : activeIndex + 1) * 100) / slots}%`,
             background:
               "radial-gradient(closest-side, oklch(0.72 0.205 38 / 0.35), transparent 70%)",
           }}
         />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -top-px h-px transition-all duration-500 ease-out"
-          style={{
-            width: `${100 / items.length}%`,
-            left: `${(activeIndex * 100) / items.length}%`,
-            background:
-              "linear-gradient(90deg, transparent, oklch(0.72 0.205 38), transparent)",
-          }}
-        />
-        {items.map((it, index) => {
+        {items.slice(0, 2).map((it, index) => {
           const active = index === activeIndex;
-          const distance = Math.abs(activeIndex - index);
-          const dim = Math.max(0, 1 - distance * 0.45);
           return (
             <Link
               key={it.to}
@@ -58,15 +47,41 @@ export function CRMMobileBottomNav() {
                 active ? "text-primary" : "text-muted-foreground",
               )}
             >
-              <it.icon
-                className="h-5 w-5 transition-all duration-300"
-                style={{
-                  filter: active
-                    ? "drop-shadow(0 0 8px oklch(0.72 0.205 38 / 0.7))"
-                    : `drop-shadow(0 0 ${dim * 4}px oklch(0.72 0.205 38 / ${dim * 0.3}))`,
-                }}
-              />
-              <span className={cn("transition-opacity", !active && "opacity-70")}>{it.label}</span>
+              <it.icon className={cn("h-5 w-5", active && "drop-shadow-[0_0_8px_oklch(0.72_0.205_38/0.7)]")} />
+              <span className={cn(!active && "opacity-70")}>{it.label}</span>
+            </Link>
+          );
+        })}
+
+        {/* Central CRM FAB → opens dedicated CRM drawer */}
+        <button
+          onClick={onOpenCRM}
+          aria-label="Abrir CRM"
+          className="relative z-10 flex flex-col items-center justify-center gap-0.5 px-2"
+        >
+          <span
+            className="grid h-12 w-12 -mt-5 place-items-center rounded-2xl text-primary-foreground glow-primary active:scale-95 transition"
+            style={{ background: "var(--gradient-primary)" }}
+          >
+            <IdCard className="h-5 w-5" />
+          </span>
+          <span className="text-[10px] font-bold text-primary">CRM</span>
+        </button>
+
+        {items.slice(2).map((it, i) => {
+          const index = i + 2;
+          const active = index === activeIndex;
+          return (
+            <Link
+              key={it.to}
+              to={it.to}
+              className={cn(
+                "relative z-10 flex flex-1 flex-col items-center justify-center gap-0.5 rounded-xl py-1.5 text-[10px] font-bold min-h-[48px] transition-colors",
+                active ? "text-primary" : "text-muted-foreground",
+              )}
+            >
+              <it.icon className={cn("h-5 w-5", active && "drop-shadow-[0_0_8px_oklch(0.72_0.205_38/0.7)]")} />
+              <span className={cn(!active && "opacity-70")}>{it.label}</span>
             </Link>
           );
         })}
