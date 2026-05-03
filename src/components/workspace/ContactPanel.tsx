@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MessageCircle, Calendar, RotateCcw, Pencil, Sparkles, Flame, MapPin, Wallet, User, Phone, Mail, Loader2, Trash2, FileText, Clock, StickyNote, LayoutGrid } from "lucide-react";
 import { toast } from "sonner";
 import { useContact, useNotes, useTimeline, useAddNote, useDeleteContact } from "@/hooks/use-contacts";
@@ -44,6 +44,14 @@ export function ContactPanel({ contactId, onDeleted }: { contactId: string | nul
   const [mTab, setMTab] = useState<"resumo" | "notas" | "timeline" | "docs">("resumo");
   const [tlFilter, setTlFilter] = useState<"todos" | "mensagens" | "marcos" | "notas" | "handoffs">("todos");
   const [tlSort, setTlSort] = useState<"recente" | "antigo">("recente");
+  const [isXl, setIsXl] = useState(false);
+  useEffect(() => {
+    const mql = window.matchMedia("(min-width: 1280px)");
+    const onChange = () => setIsXl(mql.matches);
+    onChange();
+    mql.addEventListener("change", onChange);
+    return () => mql.removeEventListener("change", onChange);
+  }, []);
 
   const filteredTimeline = useMemo(() => {
     const isMessage = (t: string) => t === "mensagem_recebida" || t === "mensagem_enviada";
@@ -349,7 +357,7 @@ export function ContactPanel({ contactId, onDeleted }: { contactId: string | nul
           {renderInner(false)}
         </div>
       </aside>
-      <Sheet open={!!contactId} onOpenChange={(v) => { if (!v) onDeleted?.(); }}>
+      <Sheet open={!!contactId && !isXl} onOpenChange={(v) => { if (!v) onDeleted?.(); }}>
         <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto p-5 xl:hidden">
           {renderInner(true)}
         </SheetContent>
