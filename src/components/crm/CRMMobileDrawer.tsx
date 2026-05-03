@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { usePipeline, useTasks, useAppointments, useToggleTask, useUpdateAppointmentStatus } from "@/hooks/use-crm";
+import { usePipeline, useTasks, useAppointments, useToggleTask } from "@/hooks/use-crm";
 import { ContactPanel } from "@/components/workspace/ContactPanel";
 import { ContactFormDialog } from "@/components/crm/ContactFormDialog";
 import { TaskDialog } from "@/components/crm/TaskDialog";
@@ -35,7 +35,6 @@ export function CRMMobileDrawer({
   const { data: tasks = [] } = useTasks("todas");
   const { data: appts = [] } = useAppointments("semana");
   const toggleTask = useToggleTask();
-  const updateAppt = useUpdateAppointmentStatus();
 
   const filteredLeads = contacts
     .filter((c) => !["servico_realizado", "pos_venda", "perdido"].includes(c.stage))
