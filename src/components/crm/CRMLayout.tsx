@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import { PortalSidebar, portalGroups } from "@/components/portal/PortalSidebar";
 import { PortalTopBar } from "@/components/portal/PortalTopBar";
 import { CRMMobileBottomNav } from "./CRMMobileBottomNav";
+import { CRMMobileDrawer } from "./CRMMobileDrawer";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { X } from "lucide-react";
 
@@ -64,6 +65,7 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
 
 export function CRMLayout({ children }: { children: React.ReactNode }) {
   const [menu, setMenu] = useState(false);
+  const [crmDrawer, setCrmDrawer] = useState(false);
   return (
     <div className="relative flex min-h-screen w-full bg-background text-foreground">
       <div className="hidden lg:block"><PortalSidebar /></div>
@@ -72,7 +74,8 @@ export function CRMLayout({ children }: { children: React.ReactNode }) {
         <PortalTopBar onOpenMenu={() => setMenu(true)} />
         <div className="mt-4 sm:mt-6">{children}</div>
       </main>
-      <CRMMobileBottomNav />
+      <CRMMobileBottomNav onOpenCRM={() => setCrmDrawer(true)} />
+      <CRMMobileDrawer open={crmDrawer} onClose={() => setCrmDrawer(false)} />
     </div>
   );
 }
