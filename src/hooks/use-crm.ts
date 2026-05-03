@@ -220,7 +220,11 @@ export function useTasks(filter: "todas" | "hoje" | "atrasadas" | "concluidas" =
     queryKey: ["tasks", user?.id, filter],
     enabled: !!user,
     queryFn: async () => {
-      const { data, error } = await supabase.from("crm_tasks").select("*, contact:crm_contacts(id,name)").order("due_at", { ascending: true, nullsFirst: false });
+      const { data, error } = await supabase
+        .from("crm_tasks")
+        .select("*, contact:crm_contacts(id,name)")
+        .order("sort_order", { ascending: true })
+        .order("due_at", { ascending: true, nullsFirst: false });
       if (error) throw error;
       const list = (data ?? []) as any as (Task & { contact: Contact | null })[];
       const now = new Date(); const start = new Date(now); start.setHours(0,0,0,0); const end = new Date(now); end.setHours(23,59,59,999);
@@ -275,6 +279,18 @@ export function useDeleteTask() {
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("crm_tasks").delete().eq("id", id);
       if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["tasks"] }),
+  });
+}
+
+export function useReorderTasks() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (updates: { id: string; sort_order: number }[]) => {
+      await Promise.all(
+        updates.map((u) => supabase.from("crm_tasks").update({ sort_order: u.sort_order }).eq("id", u.id))
+      );
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["tasks"] }),
   });
