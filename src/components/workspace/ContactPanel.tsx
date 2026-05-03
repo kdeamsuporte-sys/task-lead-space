@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { MessageCircle, Calendar, RotateCcw, Pencil, Sparkles, Flame, MapPin, Wallet, User, Phone, Mail, Loader2, Trash2, FileText, Clock, StickyNote, LayoutGrid } from "lucide-react";
 import { toast } from "sonner";
 import { useContact, useNotes, useTimeline, useAddNote, useDeleteContact } from "@/hooks/use-contacts";
@@ -42,6 +42,23 @@ export function ContactPanel({ contactId, onDeleted }: { contactId: string | nul
   const [followupOpen, setFollowupOpen] = useState(false);
   const [noteText, setNoteText] = useState("");
   const [mTab, setMTab] = useState<"resumo" | "notas" | "timeline" | "docs">("resumo");
+  const [tlFilter, setTlFilter] = useState<"todos" | "mensagens" | "marcos" | "notas" | "handoffs">("todos");
+  const [tlSort, setTlSort] = useState<"recente" | "antigo">("recente");
+
+  const filteredTimeline = useMemo(() => {
+    const isMessage = (t: string) => t === "mensagem_recebida" || t === "mensagem_enviada";
+    const isMarco = (t: string) => ["orcamento_enviado","agendamento_criado","servico_realizado","contato_criado","etapa_alterada","lead_perdido"].includes(t);
+    const isHandoff = (t: string) => t === "handoff_ia_humano" || t === "handoff_resolvido";
+    const isNote = (t: string) => t === "nota_adicionada" || t === "nota_interna";
+    let l = timeline as any[];
+    if (tlFilter === "mensagens") l = l.filter((e) => isMessage(e.event_type));
+    else if (tlFilter === "marcos") l = l.filter((e) => isMarco(e.event_type));
+    else if (tlFilter === "notas") l = l.filter((e) => isNote(e.event_type));
+    else if (tlFilter === "handoffs") l = l.filter((e) => isHandoff(e.event_type));
+    const sorted = [...l].sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at));
+    if (tlSort === "antigo") sorted.reverse();
+    return sorted;
+  }, [timeline, tlFilter, tlSort]);
 
   if (!contactId) {
     return (
@@ -105,11 +122,25 @@ export function ContactPanel({ contactId, onDeleted }: { contactId: string | nul
 
   const timelineBlock = (
     <Block title="Timeline">
-      {timeline.length === 0 ? (
+      <div className="mb-2 -mx-1 flex gap-1 overflow-x-auto no-scrollbar px-1">
+        {[
+          { id: "todos", label: "Todos" },
+          { id: "mensagens", label: "Mensagens" },
+          { id: "marcos", label: "Marcos" },
+          { id: "notas", label: "Notas" },
+          { id: "handoffs", label: "Handoffs" },
+        ].map((f) => (
+          <button key={f.id} onClick={() => setTlFilter(f.id as any)} className={`shrink-0 rounded-full border px-2.5 py-1 text-[10px] font-bold transition ${tlFilter === f.id ? "border-primary/40 bg-primary/12 text-primary" : "border-border-soft bg-card/40 text-muted-foreground"}`}>{f.label}</button>
+        ))}
+        <button onClick={() => setTlSort(tlSort === "recente" ? "antigo" : "recente")} className="ml-auto shrink-0 rounded-full border border-border-soft bg-card/40 px-2.5 py-1 text-[10px] font-bold text-muted-foreground hover:text-foreground">
+          {tlSort === "recente" ? "↓ Recente" : "↑ Antigo"}
+        </button>
+      </div>
+      {filteredTimeline.length === 0 ? (
         <div className="rounded-xl border border-border-soft bg-card/40 p-3 text-xs text-muted-foreground">Nenhum evento registrado.</div>
       ) : (
         <ol className="relative space-y-4 border-l-2 border-border-soft pl-4">
-          {timeline.map((e, i) => (
+          {filteredTimeline.map((e, i) => (
             <li key={e.id} className="relative">
               <span className={`absolute -left-[22px] top-1 h-3 w-3 rounded-full ring-4 ring-background ${i === 0 ? "bg-primary shadow-[0_0_0_3px_oklch(0.72_0.205_38_/_0.25)]" : "bg-muted-foreground/30"}`} />
               <div className="text-xs font-semibold">{e.description ?? e.event_type}</div>
