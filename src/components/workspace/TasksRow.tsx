@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, createContext, useContext } from "react";
 import { MessageCircle, FileText, CheckCircle2, Trash2, Plus, Clock, MoreHorizontal, ChevronDown, GripVertical } from "lucide-react";
 import { toast } from "sonner";
 import { useTasks, useToggleTask, useDeleteTask, useReorderTasks } from "@/hooks/use-crm";
@@ -254,14 +254,13 @@ export function TasksRow({ onSelect }: { onSelect?: (id: string) => void }) {
 
 /* ============ Sortable wrappers ============ */
 
-import { createContext, useContext } from "react";
-
 type SortableCtx = { listeners: any; setActivatorNodeRef: (el: HTMLElement | null) => void } | null;
 const SortableHandleContext = createContext<SortableCtx>(null);
 
 function SortableTaskRow({ id, draggable, children }: { id: string; draggable: boolean; children: React.ReactNode }) {
+  const sortable = useSortable({ id, disabled: !draggable });
   if (!draggable) return <>{children}</>;
-  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({ id });
+  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = sortable;
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
