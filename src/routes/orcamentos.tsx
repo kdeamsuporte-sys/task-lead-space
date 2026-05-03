@@ -64,23 +64,23 @@ function OrcamentosPage() {
           {list.map((l) => {
             const st = statusMap[l.budgetStatus!];
             return (
-              <article key={l.id} className="glass-card ring-premium relative overflow-hidden rounded-2xl p-4">
+              <article key={l.id} className="glass-card ring-premium relative overflow-hidden rounded-2xl p-3 sm:p-4">
                 <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-primary/10 blur-2xl" />
-                <div className="relative flex items-start justify-between">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/30 to-primary/5 text-xs font-black text-primary ring-1 ring-primary/30">{l.initials}</div>
+                <div className="relative flex items-start justify-between gap-2">
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <div className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/30 to-primary/5 text-xs font-black text-primary ring-1 ring-primary/30">{l.initials}</div>
                     <div className="min-w-0">
                       <div className="truncate text-sm font-bold">{l.name}</div>
                       <div className="truncate text-[11px] text-muted-foreground">{l.service}</div>
                     </div>
                   </div>
-                  <CRMStatusBadge tone={st.tone}>{st.label}</CRMStatusBadge>
+                  <CRMStatusBadge tone={st.tone} size="xs">{st.label}</CRMStatusBadge>
                 </div>
 
-                <div className="relative mt-4 flex items-end justify-between border-y border-border-soft py-3">
+                <div className="relative mt-3 sm:mt-4 flex items-end justify-between gap-2 border-y border-border-soft py-3">
                   <div>
                     <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Valor</div>
-                    <div className="text-2xl font-black text-primary tabular-nums">{l.estimate}</div>
+                    <div className="text-xl sm:text-2xl font-black text-primary tabular-nums">{l.estimate}</div>
                   </div>
                   <div className="text-right">
                     <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Validade</div>

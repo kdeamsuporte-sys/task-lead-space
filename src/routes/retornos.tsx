@@ -53,12 +53,12 @@ function RetornosPage() {
               const lead = leads.find((l) => l.id === r.leadId)!;
               const tone = r.status === "atrasado" ? "danger" : r.status === "hoje" ? "primary" : r.status === "concluido" ? "success" : "info";
               return (
-                <article key={r.id} className="glass-card ring-premium rounded-2xl p-4 transition hover:-translate-y-0.5 hover:border-primary/40">
+                <article key={r.id} className="glass-card ring-premium rounded-2xl p-3 sm:p-4 transition hover:-translate-y-0.5 hover:border-primary/40">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/30 to-primary/5 text-sm font-black text-primary ring-1 ring-primary/30">{lead.initials}</div>
+                      <div className="flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/30 to-primary/5 text-sm font-black text-primary ring-1 ring-primary/30">{lead.initials}</div>
                       <div className="min-w-0">
-                        <div className="text-sm font-bold leading-tight">{lead.name}</div>
+                        <div className="truncate text-sm font-bold leading-tight">{lead.name}</div>
                         <div className="text-[11px] text-muted-foreground">{lead.phone}</div>
                       </div>
                     </div>
