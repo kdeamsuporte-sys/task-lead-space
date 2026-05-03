@@ -326,6 +326,8 @@
     background-clip: text;
     color: transparent;
   }
+  .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
   .divider-soft {
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--border), transparent);

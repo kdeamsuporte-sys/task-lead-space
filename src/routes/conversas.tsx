@@ -113,9 +113,12 @@ function Page() {
         <CRMPageHeader eyebrow="Atendimento" title="Conversas" description="Inbox unificado de WhatsApp e canais conectados." />
         <CRMFilterChips options={filters} value={filter} onChange={setFilter} />
 
-        <div className="grid gap-3 lg:grid-cols-[360px_1fr]">
-          {/* List */}
-          <aside className="glass rounded-2xl p-3 max-h-[72vh] overflow-y-auto scroll-x-soft">
+        <div className="grid gap-3 lg:grid-cols-[340px_1fr]">
+          {/* List — hide on mobile when a conversation is open */}
+          <aside className={cn(
+            "glass rounded-2xl p-3 max-h-[72vh] overflow-y-auto scroll-x-soft",
+            current ? "hidden lg:block" : "block"
+          )}>
             <div className="flex items-center gap-2 rounded-full glass px-3 py-1.5 mb-3">
               <Search className="h-3.5 w-3.5 text-muted-foreground" />
               <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar por nome, telefone…" className="flex-1 bg-transparent text-xs outline-none" />
@@ -153,7 +156,10 @@ function Page() {
           </aside>
 
           {/* Chat */}
-          <section className="glass rounded-2xl flex flex-col min-h-[72vh]">
+          <section className={cn(
+            "glass rounded-2xl flex flex-col min-h-[60vh] lg:min-h-[72vh]",
+            !current ? "hidden lg:flex" : "flex"
+          )}>
             {!current ? (
               <div className="flex-1 flex items-center justify-center text-center p-8">
                 <div>
@@ -165,20 +171,23 @@ function Page() {
             ) : (
               <>
                 <header className="flex flex-wrap items-center gap-2 border-b border-border-soft p-3">
+                  <button onClick={() => setSelected(null)} className="lg:hidden h-8 w-8 grid place-items-center rounded-full glass" title="Voltar">‹</button>
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary/30 to-primary/5 text-[11px] font-black text-primary">{initials(current.name)}</div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <h3 className="truncate font-bold">{current.name}</h3>
-                      <CRMStatusBadge tone="success">WhatsApp</CRMStatusBadge>
-                      <CRMStatusBadge tone="info">{STAGE_LABEL[current.stage]}</CRMStatusBadge>
+                      <span className="hidden sm:flex items-center gap-1.5">
+                        <CRMStatusBadge tone="success">WhatsApp</CRMStatusBadge>
+                        <CRMStatusBadge tone="info">{STAGE_LABEL[current.stage]}</CRMStatusBadge>
+                      </span>
                     </div>
                     <div className="text-[11px] text-muted-foreground">{current.phone || "sem telefone"} · {current.service || "sem serviço"}</div>
                   </div>
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    <button onClick={openWa} className="inline-flex items-center gap-1 rounded-full bg-success/15 px-2.5 py-1 text-[11px] font-bold text-success ring-1 ring-success/30"><Phone className="h-3 w-3" /> WhatsApp</button>
-                    <button className="inline-flex items-center gap-1 rounded-full glass px-2.5 py-1 text-[11px] font-bold"><Pause className="h-3 w-3" /> Pausar IA</button>
-                    <button className="inline-flex items-center gap-1 rounded-full glass px-2.5 py-1 text-[11px] font-bold"><UserCog className="h-3 w-3" /> Assumir</button>
-                    <button onClick={() => resolve.mutate()} className="inline-flex items-center gap-1 rounded-full glass px-2.5 py-1 text-[11px] font-bold text-success"><CheckCircle2 className="h-3 w-3" /> Resolver</button>
+                  <div className="-mx-1 flex items-center gap-1.5 overflow-x-auto no-scrollbar w-full sm:w-auto sm:overflow-visible">
+                    <button onClick={openWa} className="shrink-0 inline-flex items-center gap-1 rounded-full bg-success/15 px-2.5 py-1 text-[11px] font-bold text-success ring-1 ring-success/30"><Phone className="h-3 w-3" /> <span className="hidden sm:inline">WhatsApp</span></button>
+                    <button className="shrink-0 inline-flex items-center gap-1 rounded-full glass px-2.5 py-1 text-[11px] font-bold"><Pause className="h-3 w-3" /> <span className="hidden sm:inline">Pausar IA</span></button>
+                    <button className="shrink-0 inline-flex items-center gap-1 rounded-full glass px-2.5 py-1 text-[11px] font-bold"><UserCog className="h-3 w-3" /> <span className="hidden sm:inline">Assumir</span></button>
+                    <button onClick={() => resolve.mutate()} className="shrink-0 inline-flex items-center gap-1 rounded-full glass px-2.5 py-1 text-[11px] font-bold text-success"><CheckCircle2 className="h-3 w-3" /> <span className="hidden sm:inline">Resolver</span></button>
                   </div>
                 </header>
 
@@ -205,9 +214,9 @@ function Page() {
 
                 <form onSubmit={(e) => { e.preventDefault(); sendMsg.mutate(); }} className="border-t border-border-soft p-2 flex items-center gap-2">
                   <button type="button" title="Sugestão IA" className="h-9 w-9 grid place-items-center rounded-full glass text-primary"><Sparkles className="h-4 w-4" /></button>
-                  <input value={msg} onChange={(e) => setMsg(e.target.value)} placeholder="Digite a mensagem" className="flex-1 rounded-full glass px-3 py-2 text-sm outline-none" />
-                  <button type="submit" disabled={!msg.trim() || sendMsg.isPending} className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold text-primary-foreground glow-soft disabled:opacity-50" style={{ background: "var(--gradient-primary)" }}>
-                    <Send className="h-3.5 w-3.5" /> Enviar
+                  <input value={msg} onChange={(e) => setMsg(e.target.value)} placeholder="Digite a mensagem" className="flex-1 min-w-0 rounded-full glass px-3 py-2 text-sm outline-none" />
+                  <button type="submit" disabled={!msg.trim() || sendMsg.isPending} className="shrink-0 inline-flex items-center gap-1.5 rounded-full px-3 sm:px-4 py-2 text-xs font-bold text-primary-foreground glow-primary disabled:opacity-50" style={{ background: "var(--gradient-primary)" }}>
+                    <Send className="h-3.5 w-3.5" /> <span className="hidden sm:inline">Enviar</span>
                   </button>
                 </form>
               </>
