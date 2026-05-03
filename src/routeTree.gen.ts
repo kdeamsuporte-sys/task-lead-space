@@ -20,8 +20,14 @@ import { Route as MetricasRouteImport } from './routes/metricas'
 import { Route as LogsRouteImport } from './routes/logs'
 import { Route as LancamentoRouteImport } from './routes/lancamento'
 import { Route as InboxRouteImport } from './routes/inbox'
+import { Route as IaRouteImport } from './routes/ia'
 import { Route as ConversasRouteImport } from './routes/conversas'
 import { Route as ContatosRouteImport } from './routes/contatos'
+import { Route as ConhecimentoRouteImport } from './routes/conhecimento'
+import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
+import { Route as ComercialRouteImport } from './routes/comercial'
+import { Route as CaptacaoRouteImport } from './routes/captacao'
+import { Route as CampanhasRouteImport } from './routes/campanhas'
 import { Route as AutomacoesRouteImport } from './routes/automacoes'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AgendaRouteImport } from './routes/agenda'
@@ -82,6 +88,11 @@ const InboxRoute = InboxRouteImport.update({
   path: '/inbox',
   getParentRoute: () => rootRouteImport,
 } as any)
+const IaRoute = IaRouteImport.update({
+  id: '/ia',
+  path: '/ia',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ConversasRoute = ConversasRouteImport.update({
   id: '/conversas',
   path: '/conversas',
@@ -90,6 +101,31 @@ const ConversasRoute = ConversasRouteImport.update({
 const ContatosRoute = ContatosRouteImport.update({
   id: '/contatos',
   path: '/contatos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConhecimentoRoute = ConhecimentoRouteImport.update({
+  id: '/conhecimento',
+  path: '/conhecimento',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfiguracoesRoute = ConfiguracoesRouteImport.update({
+  id: '/configuracoes',
+  path: '/configuracoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ComercialRoute = ComercialRouteImport.update({
+  id: '/comercial',
+  path: '/comercial',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CaptacaoRoute = CaptacaoRouteImport.update({
+  id: '/captacao',
+  path: '/captacao',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CampanhasRoute = CampanhasRouteImport.update({
+  id: '/campanhas',
+  path: '/campanhas',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AutomacoesRoute = AutomacoesRouteImport.update({
@@ -118,8 +154,14 @@ export interface FileRoutesByFullPath {
   '/agenda': typeof AgendaRoute
   '/auth': typeof AuthRoute
   '/automacoes': typeof AutomacoesRoute
+  '/campanhas': typeof CampanhasRoute
+  '/captacao': typeof CaptacaoRoute
+  '/comercial': typeof ComercialRoute
+  '/configuracoes': typeof ConfiguracoesRoute
+  '/conhecimento': typeof ConhecimentoRoute
   '/contatos': typeof ContatosRoute
   '/conversas': typeof ConversasRoute
+  '/ia': typeof IaRoute
   '/inbox': typeof InboxRoute
   '/lancamento': typeof LancamentoRoute
   '/logs': typeof LogsRoute
@@ -137,8 +179,14 @@ export interface FileRoutesByTo {
   '/agenda': typeof AgendaRoute
   '/auth': typeof AuthRoute
   '/automacoes': typeof AutomacoesRoute
+  '/campanhas': typeof CampanhasRoute
+  '/captacao': typeof CaptacaoRoute
+  '/comercial': typeof ComercialRoute
+  '/configuracoes': typeof ConfiguracoesRoute
+  '/conhecimento': typeof ConhecimentoRoute
   '/contatos': typeof ContatosRoute
   '/conversas': typeof ConversasRoute
+  '/ia': typeof IaRoute
   '/inbox': typeof InboxRoute
   '/lancamento': typeof LancamentoRoute
   '/logs': typeof LogsRoute
@@ -157,8 +205,14 @@ export interface FileRoutesById {
   '/agenda': typeof AgendaRoute
   '/auth': typeof AuthRoute
   '/automacoes': typeof AutomacoesRoute
+  '/campanhas': typeof CampanhasRoute
+  '/captacao': typeof CaptacaoRoute
+  '/comercial': typeof ComercialRoute
+  '/configuracoes': typeof ConfiguracoesRoute
+  '/conhecimento': typeof ConhecimentoRoute
   '/contatos': typeof ContatosRoute
   '/conversas': typeof ConversasRoute
+  '/ia': typeof IaRoute
   '/inbox': typeof InboxRoute
   '/lancamento': typeof LancamentoRoute
   '/logs': typeof LogsRoute
@@ -178,8 +232,14 @@ export interface FileRouteTypes {
     | '/agenda'
     | '/auth'
     | '/automacoes'
+    | '/campanhas'
+    | '/captacao'
+    | '/comercial'
+    | '/configuracoes'
+    | '/conhecimento'
     | '/contatos'
     | '/conversas'
+    | '/ia'
     | '/inbox'
     | '/lancamento'
     | '/logs'
@@ -197,8 +257,14 @@ export interface FileRouteTypes {
     | '/agenda'
     | '/auth'
     | '/automacoes'
+    | '/campanhas'
+    | '/captacao'
+    | '/comercial'
+    | '/configuracoes'
+    | '/conhecimento'
     | '/contatos'
     | '/conversas'
+    | '/ia'
     | '/inbox'
     | '/lancamento'
     | '/logs'
@@ -216,8 +282,14 @@ export interface FileRouteTypes {
     | '/agenda'
     | '/auth'
     | '/automacoes'
+    | '/campanhas'
+    | '/captacao'
+    | '/comercial'
+    | '/configuracoes'
+    | '/conhecimento'
     | '/contatos'
     | '/conversas'
+    | '/ia'
     | '/inbox'
     | '/lancamento'
     | '/logs'
@@ -236,8 +308,14 @@ export interface RootRouteChildren {
   AgendaRoute: typeof AgendaRoute
   AuthRoute: typeof AuthRoute
   AutomacoesRoute: typeof AutomacoesRoute
+  CampanhasRoute: typeof CampanhasRoute
+  CaptacaoRoute: typeof CaptacaoRoute
+  ComercialRoute: typeof ComercialRoute
+  ConfiguracoesRoute: typeof ConfiguracoesRoute
+  ConhecimentoRoute: typeof ConhecimentoRoute
   ContatosRoute: typeof ContatosRoute
   ConversasRoute: typeof ConversasRoute
+  IaRoute: typeof IaRoute
   InboxRoute: typeof InboxRoute
   LancamentoRoute: typeof LancamentoRoute
   LogsRoute: typeof LogsRoute
@@ -330,6 +408,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InboxRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ia': {
+      id: '/ia'
+      path: '/ia'
+      fullPath: '/ia'
+      preLoaderRoute: typeof IaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/conversas': {
       id: '/conversas'
       path: '/conversas'
@@ -342,6 +427,41 @@ declare module '@tanstack/react-router' {
       path: '/contatos'
       fullPath: '/contatos'
       preLoaderRoute: typeof ContatosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/conhecimento': {
+      id: '/conhecimento'
+      path: '/conhecimento'
+      fullPath: '/conhecimento'
+      preLoaderRoute: typeof ConhecimentoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/configuracoes': {
+      id: '/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/configuracoes'
+      preLoaderRoute: typeof ConfiguracoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/comercial': {
+      id: '/comercial'
+      path: '/comercial'
+      fullPath: '/comercial'
+      preLoaderRoute: typeof ComercialRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/captacao': {
+      id: '/captacao'
+      path: '/captacao'
+      fullPath: '/captacao'
+      preLoaderRoute: typeof CaptacaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/campanhas': {
+      id: '/campanhas'
+      path: '/campanhas'
+      fullPath: '/campanhas'
+      preLoaderRoute: typeof CampanhasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/automacoes': {
@@ -380,8 +500,14 @@ const rootRouteChildren: RootRouteChildren = {
   AgendaRoute: AgendaRoute,
   AuthRoute: AuthRoute,
   AutomacoesRoute: AutomacoesRoute,
+  CampanhasRoute: CampanhasRoute,
+  CaptacaoRoute: CaptacaoRoute,
+  ComercialRoute: ComercialRoute,
+  ConfiguracoesRoute: ConfiguracoesRoute,
+  ConhecimentoRoute: ConhecimentoRoute,
   ContatosRoute: ContatosRoute,
   ConversasRoute: ConversasRoute,
+  IaRoute: IaRoute,
   InboxRoute: InboxRoute,
   LancamentoRoute: LancamentoRoute,
   LogsRoute: LogsRoute,
