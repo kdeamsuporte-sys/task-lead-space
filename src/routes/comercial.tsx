@@ -41,6 +41,7 @@ function Page() {
   return (
     <CRMLayout>
       <div className="space-y-6">
+        <div className="ambient-glow">
         <CRMPageHeader
           eyebrow="Comercial"
           title="Operação comercial"
@@ -48,11 +49,12 @@ function Page() {
           actions={
             <>
               <button onClick={() => { setDefaultContact(null); setContactOpen(true); }} className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card/60 px-3 py-1.5 text-xs font-bold"><Plus className="h-3.5 w-3.5" /> Novo contato</button>
-              <button onClick={() => { setDefaultContact(null); setQuoteOpen(true); }} className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold text-primary-foreground" style={{ background: "var(--gradient-primary)" }}><FileText className="h-3.5 w-3.5" /> Novo orçamento</button>
+              <button onClick={() => { setDefaultContact(null); setQuoteOpen(true); }} className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold text-primary-foreground glow-primary" style={{ background: "var(--gradient-primary)" }}><FileText className="h-3.5 w-3.5" /> Novo orçamento</button>
               <button onClick={() => { setDefaultContact(null); setTaskOpen(true); }} className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/8 px-3 py-1.5 text-xs font-bold text-primary"><Plus className="h-3.5 w-3.5" /> Nova tarefa</button>
             </>
           }
         />
+        </div>
 
         {l1 || !dash ? (
           <div className="flex justify-center py-10"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
@@ -78,10 +80,10 @@ function Page() {
             <div className="py-6 text-center text-xs text-muted-foreground">Nenhum lead quente no momento.</div>
           ) : (
             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-              {hot.map((c) => (
-                <article key={c.id} className="rounded-2xl border border-border-soft bg-background/40 p-3.5">
+              {hot.map((c, i) => (
+                <article key={c.id} className={`rounded-2xl border border-border-soft bg-background/40 p-3.5 transition ${i === 0 ? "glow-next" : "glow-hot"}`}>
                   <div className="flex items-center gap-2.5">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary/30 to-primary/5 text-xs font-black text-primary ring-1 ring-primary/30">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary/30 to-primary/5 text-xs font-black text-primary ring-1 ring-primary/30 glow-soft">
                       {c.name.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase()}
                     </div>
                     <div className="min-w-0 flex-1">
@@ -115,10 +117,10 @@ function Page() {
               <div className="py-6 text-center text-xs text-muted-foreground">Sem tarefas para hoje.</div>
             ) : (
               <ul className="space-y-2">
-                {tasks.map((t: any) => {
+                {(() => { const firstPending = tasks.findIndex((t: any) => t.status !== "concluida"); return tasks.map((t: any, i: number) => {
                   const done = t.status === "concluida";
                   return (
-                    <li key={t.id} className="flex items-start gap-3 rounded-xl border border-border-soft bg-background/40 p-3">
+                    <li key={t.id} className={`flex items-start gap-3 rounded-xl border border-border-soft bg-background/40 p-3 ${i === firstPending ? "glow-next" : ""}`}>
                       <button onClick={() => toggle.mutate({ id: t.id, status: done ? "pendente" : "concluida" })} className="mt-0.5 text-primary">
                         {done ? <CheckCircle2 className="h-5 w-5" /> : <Circle className="h-5 w-5" />}
                       </button>
@@ -128,7 +130,7 @@ function Page() {
                       </div>
                     </li>
                   );
-                })}
+                }); })()}
               </ul>
             )}
           </section>
