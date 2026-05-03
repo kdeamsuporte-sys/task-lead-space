@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { ScheduleBar } from "./ScheduleBar";
 import { KpiCards } from "./KpiCards";
+import { DemoAnalyticsPanel } from "./DemoAnalyticsPanel";
 import { LeadsRow } from "./LeadsRow";
 import { TasksRow } from "./TasksRow";
 import { ContactPanel } from "./ContactPanel";
@@ -25,6 +26,7 @@ export function Workspace() {
         />
         <ScheduleBar />
         <KpiCards />
+        <DemoAnalyticsPanel />
         <LeadsRow onSelect={setSelected} selected={selected} />
         <TasksRow onSelect={setSelected} />
       </div>
