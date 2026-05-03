@@ -5,6 +5,7 @@ import {
   Zap, BarChart3, Settings, Sparkles, HelpCircle, Menu, X, Plus, MessageCircle, Bell, Search, ChevronDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CRMMobileBottomNav } from "./CRMMobileBottomNav";
 
 export const navItems = [
   { to: "/", icon: LayoutGrid, label: "Workspace", exact: true },
@@ -192,6 +193,7 @@ export function CRMLayout({ children }: { children: React.ReactNode }) {
         <CRMTopBar onOpenMenu={() => setMenu(true)} />
         <div className="mt-6">{children}</div>
       </main>
+      <CRMMobileBottomNav />
     </div>
   );
 }
