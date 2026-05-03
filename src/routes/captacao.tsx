@@ -80,7 +80,7 @@ function Page() {
           actions={
             <>
               <button onClick={() => setApptOpen(true)} className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card/60 px-3 py-1.5 text-xs font-bold"><Calendar className="h-3.5 w-3.5" /> Novo agendamento</button>
-              <button onClick={() => setContactOpen(true)} className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold text-primary-foreground" style={{ background: "var(--gradient-primary)" }}><UserPlus className="h-3.5 w-3.5" /> Novo lead</button>
+              <button onClick={() => setContactOpen(true)} className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold text-primary-foreground glow-primary" style={{ background: "var(--gradient-primary)" }}><UserPlus className="h-3.5 w-3.5" /> Novo lead</button>
             </>
           }
         />
@@ -106,7 +106,7 @@ function Page() {
                   const st = channelStatus(ch.kind);
                   const connected = st?.status === "conectado";
                   return (
-                    <div key={ch.kind} className="rounded-2xl border border-border-soft bg-background/40 p-4">
+                    <div key={ch.kind} className={`rounded-2xl border border-border-soft bg-background/40 p-4 ${connected ? "glow-soft" : ""}`}>
                       <div className="flex items-center gap-2.5">
                         <div className={`flex h-9 w-9 items-center justify-center rounded-xl ${connected ? "bg-success/15 text-success" : "bg-secondary text-muted-foreground"}`}><ch.icon className="h-4 w-4" /></div>
                         <div className="min-w-0 flex-1">
@@ -133,8 +133,8 @@ function Page() {
                   <div className="py-6 text-center text-xs text-muted-foreground">Sem leads ainda.</div>
                 ) : (
                   <ul className="space-y-2">
-                    {data.recent.slice(0, 8).map((c: any) => (
-                      <li key={c.id} className="flex items-center justify-between rounded-xl border border-border-soft bg-background/40 px-3 py-2.5">
+                    {data.recent.slice(0, 8).map((c: any, i: number) => (
+                      <li key={c.id} className={`flex items-center justify-between rounded-xl border border-border-soft bg-background/40 px-3 py-2.5 ${i === 0 ? "glow-next" : ""}`}>
                         <div className="min-w-0">
                           <div className="truncate text-sm font-bold">{c.name}</div>
                           <div className="truncate text-[11px] text-muted-foreground">{c.source ?? "Origem indefinida"} · {STAGE_LABEL[c.stage]}</div>
