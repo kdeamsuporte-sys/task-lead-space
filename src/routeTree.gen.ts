@@ -9,8 +9,62 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RetornosRouteImport } from './routes/retornos'
+import { Route as RelatoriosRouteImport } from './routes/relatorios'
+import { Route as PipelineRouteImport } from './routes/pipeline'
+import { Route as PerdidosRouteImport } from './routes/perdidos'
+import { Route as OrcamentosRouteImport } from './routes/orcamentos'
+import { Route as InboxRouteImport } from './routes/inbox'
+import { Route as ContatosRouteImport } from './routes/contatos'
+import { Route as AutomacoesRouteImport } from './routes/automacoes'
+import { Route as AgendaRouteImport } from './routes/agenda'
 import { Route as IndexRouteImport } from './routes/index'
 
+const RetornosRoute = RetornosRouteImport.update({
+  id: '/retornos',
+  path: '/retornos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RelatoriosRoute = RelatoriosRouteImport.update({
+  id: '/relatorios',
+  path: '/relatorios',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PipelineRoute = PipelineRouteImport.update({
+  id: '/pipeline',
+  path: '/pipeline',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PerdidosRoute = PerdidosRouteImport.update({
+  id: '/perdidos',
+  path: '/perdidos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrcamentosRoute = OrcamentosRouteImport.update({
+  id: '/orcamentos',
+  path: '/orcamentos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InboxRoute = InboxRouteImport.update({
+  id: '/inbox',
+  path: '/inbox',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContatosRoute = ContatosRouteImport.update({
+  id: '/contatos',
+  path: '/contatos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AutomacoesRoute = AutomacoesRouteImport.update({
+  id: '/automacoes',
+  path: '/automacoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgendaRoute = AgendaRouteImport.update({
+  id: '/agenda',
+  path: '/agenda',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +73,158 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/agenda': typeof AgendaRoute
+  '/automacoes': typeof AutomacoesRoute
+  '/contatos': typeof ContatosRoute
+  '/inbox': typeof InboxRoute
+  '/orcamentos': typeof OrcamentosRoute
+  '/perdidos': typeof PerdidosRoute
+  '/pipeline': typeof PipelineRoute
+  '/relatorios': typeof RelatoriosRoute
+  '/retornos': typeof RetornosRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/agenda': typeof AgendaRoute
+  '/automacoes': typeof AutomacoesRoute
+  '/contatos': typeof ContatosRoute
+  '/inbox': typeof InboxRoute
+  '/orcamentos': typeof OrcamentosRoute
+  '/perdidos': typeof PerdidosRoute
+  '/pipeline': typeof PipelineRoute
+  '/relatorios': typeof RelatoriosRoute
+  '/retornos': typeof RetornosRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/agenda': typeof AgendaRoute
+  '/automacoes': typeof AutomacoesRoute
+  '/contatos': typeof ContatosRoute
+  '/inbox': typeof InboxRoute
+  '/orcamentos': typeof OrcamentosRoute
+  '/perdidos': typeof PerdidosRoute
+  '/pipeline': typeof PipelineRoute
+  '/relatorios': typeof RelatoriosRoute
+  '/retornos': typeof RetornosRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/agenda'
+    | '/automacoes'
+    | '/contatos'
+    | '/inbox'
+    | '/orcamentos'
+    | '/perdidos'
+    | '/pipeline'
+    | '/relatorios'
+    | '/retornos'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/agenda'
+    | '/automacoes'
+    | '/contatos'
+    | '/inbox'
+    | '/orcamentos'
+    | '/perdidos'
+    | '/pipeline'
+    | '/relatorios'
+    | '/retornos'
+  id:
+    | '__root__'
+    | '/'
+    | '/agenda'
+    | '/automacoes'
+    | '/contatos'
+    | '/inbox'
+    | '/orcamentos'
+    | '/perdidos'
+    | '/pipeline'
+    | '/relatorios'
+    | '/retornos'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AgendaRoute: typeof AgendaRoute
+  AutomacoesRoute: typeof AutomacoesRoute
+  ContatosRoute: typeof ContatosRoute
+  InboxRoute: typeof InboxRoute
+  OrcamentosRoute: typeof OrcamentosRoute
+  PerdidosRoute: typeof PerdidosRoute
+  PipelineRoute: typeof PipelineRoute
+  RelatoriosRoute: typeof RelatoriosRoute
+  RetornosRoute: typeof RetornosRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/retornos': {
+      id: '/retornos'
+      path: '/retornos'
+      fullPath: '/retornos'
+      preLoaderRoute: typeof RetornosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/relatorios': {
+      id: '/relatorios'
+      path: '/relatorios'
+      fullPath: '/relatorios'
+      preLoaderRoute: typeof RelatoriosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pipeline': {
+      id: '/pipeline'
+      path: '/pipeline'
+      fullPath: '/pipeline'
+      preLoaderRoute: typeof PipelineRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/perdidos': {
+      id: '/perdidos'
+      path: '/perdidos'
+      fullPath: '/perdidos'
+      preLoaderRoute: typeof PerdidosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/orcamentos': {
+      id: '/orcamentos'
+      path: '/orcamentos'
+      fullPath: '/orcamentos'
+      preLoaderRoute: typeof OrcamentosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/inbox': {
+      id: '/inbox'
+      path: '/inbox'
+      fullPath: '/inbox'
+      preLoaderRoute: typeof InboxRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contatos': {
+      id: '/contatos'
+      path: '/contatos'
+      fullPath: '/contatos'
+      preLoaderRoute: typeof ContatosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/automacoes': {
+      id: '/automacoes'
+      path: '/automacoes'
+      fullPath: '/automacoes'
+      preLoaderRoute: typeof AutomacoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agenda': {
+      id: '/agenda'
+      path: '/agenda'
+      fullPath: '/agenda'
+      preLoaderRoute: typeof AgendaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,6 +237,15 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AgendaRoute: AgendaRoute,
+  AutomacoesRoute: AutomacoesRoute,
+  ContatosRoute: ContatosRoute,
+  InboxRoute: InboxRoute,
+  OrcamentosRoute: OrcamentosRoute,
+  PerdidosRoute: PerdidosRoute,
+  PipelineRoute: PipelineRoute,
+  RelatoriosRoute: RelatoriosRoute,
+  RetornosRoute: RetornosRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
