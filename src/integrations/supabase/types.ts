@@ -702,6 +702,7 @@ export type Database = {
           id: string
           owner_id: string
           priority: Database["public"]["Enums"]["crm_priority"]
+          sort_order: number
           status: Database["public"]["Enums"]["crm_task_status"]
           title: string
           updated_at: string
@@ -714,6 +715,7 @@ export type Database = {
           id?: string
           owner_id: string
           priority?: Database["public"]["Enums"]["crm_priority"]
+          sort_order?: number
           status?: Database["public"]["Enums"]["crm_task_status"]
           title: string
           updated_at?: string
@@ -726,6 +728,7 @@ export type Database = {
           id?: string
           owner_id?: string
           priority?: Database["public"]["Enums"]["crm_priority"]
+          sort_order?: number
           status?: Database["public"]["Enums"]["crm_task_status"]
           title?: string
           updated_at?: string
