@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 import { usePipeline, useTasks, useAppointments, useToggleTask, useUpdateAppointmentStatus } from "@/hooks/use-crm";
 import { ContactPanel } from "@/components/workspace/ContactPanel";
@@ -13,7 +12,7 @@ import { CRMStatusBadge } from "@/components/crm/CRMStatusBadge";
 import { CRMEmptyState } from "@/components/crm/CRMEmptyState";
 import {
   X, Users, ListTodo, CalendarDays, IdCard, Plus, MessageCircle,
-  RotateCcw, CheckCircle2, Phone, Search, Sparkles, ChevronRight,
+  RotateCcw, CheckCircle2, Search, ChevronRight,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -24,7 +23,6 @@ export function CRMMobileDrawer({
 }: {
   open: boolean; onClose: () => void; initialTab?: Tab; initialContactId?: string | null;
 }) {
-  const navigate = useNavigate();
   const [tab, setTab] = useState<Tab>(initialTab);
   const [search, setSearch] = useState("");
   const [contactId, setContactId] = useState<string | null>(initialContactId);
