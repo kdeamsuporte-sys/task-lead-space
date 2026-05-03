@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MessageCircle, Calendar, RotateCcw, Pencil, Sparkles, Flame, MapPin, Wallet, User, Phone, Mail, Loader2, Trash2 } from "lucide-react";
+import { MessageCircle, Calendar, RotateCcw, Pencil, Sparkles, Flame, MapPin, Wallet, User, Phone, Mail, Loader2, Trash2, FileText, Clock, StickyNote, LayoutGrid } from "lucide-react";
 import { toast } from "sonner";
 import { useContact, useNotes, useTimeline, useAddNote, useDeleteContact } from "@/hooks/use-contacts";
 import { whatsappLink } from "@/lib/whatsapp";
@@ -41,6 +41,7 @@ export function ContactPanel({ contactId, onDeleted }: { contactId: string | nul
   const [appointmentOpen, setAppointmentOpen] = useState(false);
   const [followupOpen, setFollowupOpen] = useState(false);
   const [noteText, setNoteText] = useState("");
+  const [mTab, setMTab] = useState<"resumo" | "notas" | "timeline" | "docs">("resumo");
 
   if (!contactId) {
     return (
@@ -93,7 +94,104 @@ export function ContactPanel({ contactId, onDeleted }: { contactId: string | nul
     }
   };
 
-  const inner = (
+  const summaryBlock = (
+    <Block title="Resumo comercial">
+      <Row icon={User} label="Serviço" value={contact.service ?? "—"} />
+      <Row icon={MapPin} label="Bairro" value={[contact.neighborhood, contact.city].filter(Boolean).join(" · ") || "—"} />
+      <Row icon={Wallet} label="Potencial" value={fmtMoney(contact.potential_value as any)} accent />
+      <Row icon={Calendar} label="Próximo passo" value={contact.next_step ?? "—"} />
+    </Block>
+  );
+
+  const timelineBlock = (
+    <Block title="Timeline">
+      {timeline.length === 0 ? (
+        <div className="rounded-xl border border-border-soft bg-card/40 p-3 text-xs text-muted-foreground">Nenhum evento registrado.</div>
+      ) : (
+        <ol className="relative space-y-4 border-l-2 border-border-soft pl-4">
+          {timeline.map((e, i) => (
+            <li key={e.id} className="relative">
+              <span className={`absolute -left-[22px] top-1 h-3 w-3 rounded-full ring-4 ring-background ${i === 0 ? "bg-primary shadow-[0_0_0_3px_oklch(0.72_0.205_38_/_0.25)]" : "bg-muted-foreground/30"}`} />
+              <div className="text-xs font-semibold">{e.description ?? e.event_type}</div>
+              <div className="text-[10px] text-muted-foreground">{fmtDate(e.created_at)}</div>
+            </li>
+          ))}
+        </ol>
+      )}
+    </Block>
+  );
+
+  const notesBlock = (
+    <Block title="Notas internas">
+      <div className="space-y-2">
+        <textarea
+          id="note-input"
+          value={noteText}
+          onChange={(e) => setNoteText(e.target.value)}
+          placeholder="Adicionar nota…"
+          className="w-full rounded-2xl border border-border-soft bg-card/60 p-3 text-xs leading-relaxed text-foreground/85 outline-none focus:border-primary"
+          rows={2}
+        />
+        <button
+          onClick={onAddNote}
+          disabled={addNote.isPending || !noteText.trim()}
+          className="inline-flex items-center gap-1.5 rounded-lg bg-primary/15 px-3 py-1.5 text-[11px] font-bold text-primary ring-1 ring-primary/30 disabled:opacity-50"
+        >
+          {addNote.isPending && <Loader2 className="h-3 w-3 animate-spin" />}
+          Adicionar nota
+        </button>
+        {notes.length > 0 && (
+          <ul className="space-y-1.5 pt-2">
+            {notes.map((n) => (
+              <li key={n.id} className="rounded-xl border border-border-soft bg-card/40 p-2.5">
+                <div className="text-xs leading-relaxed text-foreground/85">{n.body}</div>
+                <div className="mt-1 text-[10px] text-muted-foreground">{fmtDate(n.created_at)}</div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </Block>
+  );
+
+  const docsBlock = (
+    <Block title="Documentos">
+      <div className="rounded-xl border border-dashed border-border-soft bg-card/40 p-4 text-center">
+        <FileText className="mx-auto h-5 w-5 text-muted-foreground" />
+        <div className="mt-2 text-xs font-bold">Sem documentos</div>
+        <div className="mt-0.5 text-[11px] text-muted-foreground">Anexe contratos, orçamentos e fotos do serviço.</div>
+        <button className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-border bg-card/70 px-3 py-1.5 text-[11px] font-bold hover:border-primary/30">
+          <FileText className="h-3 w-3" /> Em breve
+        </button>
+      </div>
+    </Block>
+  );
+
+  const mobileTabs: { id: typeof mTab; label: string; icon: any }[] = [
+    { id: "resumo", label: "Resumo", icon: LayoutGrid },
+    { id: "notas", label: "Notas", icon: StickyNote },
+    { id: "timeline", label: "Timeline", icon: Clock },
+    { id: "docs", label: "Documentos", icon: FileText },
+  ];
+
+  const renderBody = (mobile: boolean) => {
+    if (!mobile) {
+      return (
+        <>
+          {summaryBlock}
+          {timelineBlock}
+          {notesBlock}
+          {docsBlock}
+        </>
+      );
+    }
+    if (mTab === "resumo") return summaryBlock;
+    if (mTab === "timeline") return timelineBlock;
+    if (mTab === "notas") return notesBlock;
+    return docsBlock;
+  };
+
+  const renderInner = (mobile: boolean) => (
     <>
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -181,64 +279,32 @@ export function ContactPanel({ contactId, onDeleted }: { contactId: string | nul
           <button onClick={() => setFollowupOpen(true)} className="flex items-center justify-center gap-1.5 rounded-xl border border-border bg-card/70 py-2.5 text-xs font-bold hover:border-primary/30 hover:bg-card">
             <RotateCcw className="h-3.5 w-3.5" /> Retorno
           </button>
-          <button onClick={() => document.getElementById("note-input")?.focus()} className="flex items-center justify-center gap-1.5 rounded-xl border border-border bg-card/70 py-2.5 text-xs font-bold hover:border-primary/30 hover:bg-card">
+          <button onClick={() => { if (mobile) setMTab("notas"); setTimeout(() => document.getElementById("note-input")?.focus(), 50); }} className="flex items-center justify-center gap-1.5 rounded-xl border border-border bg-card/70 py-2.5 text-xs font-bold hover:border-primary/30 hover:bg-card">
             <Pencil className="h-3.5 w-3.5" /> Nota
           </button>
         </div>
 
-        <Block title="Resumo comercial">
-          <Row icon={User} label="Serviço" value={contact.service ?? "—"} />
-          <Row icon={MapPin} label="Bairro" value={[contact.neighborhood, contact.city].filter(Boolean).join(" · ") || "—"} />
-          <Row icon={Wallet} label="Potencial" value={fmtMoney(contact.potential_value as any)} accent />
-          <Row icon={Calendar} label="Próximo passo" value={contact.next_step ?? "—"} />
-        </Block>
-
-        <Block title="Timeline">
-          {timeline.length === 0 ? (
-            <div className="rounded-xl border border-border-soft bg-card/40 p-3 text-xs text-muted-foreground">Nenhum evento registrado.</div>
-          ) : (
-            <ol className="relative space-y-4 border-l-2 border-border-soft pl-4">
-              {timeline.map((e, i) => (
-                <li key={e.id} className="relative">
-                  <span className={`absolute -left-[22px] top-1 h-3 w-3 rounded-full ring-4 ring-background ${i === 0 ? "bg-primary shadow-[0_0_0_3px_oklch(0.72_0.205_38_/_0.25)]" : "bg-muted-foreground/30"}`} />
-                  <div className="text-xs font-semibold">{e.description ?? e.event_type}</div>
-                  <div className="text-[10px] text-muted-foreground">{fmtDate(e.created_at)}</div>
-                </li>
-              ))}
-            </ol>
-          )}
-        </Block>
-
-        <Block title="Notas internas">
-          <div className="space-y-2">
-            <textarea
-              id="note-input"
-              value={noteText}
-              onChange={(e) => setNoteText(e.target.value)}
-              placeholder="Adicionar nota…"
-              className="w-full rounded-2xl border border-border-soft bg-card/60 p-3 text-xs leading-relaxed text-foreground/85 outline-none focus:border-primary"
-              rows={2}
-            />
-            <button
-              onClick={onAddNote}
-              disabled={addNote.isPending || !noteText.trim()}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-primary/15 px-3 py-1.5 text-[11px] font-bold text-primary ring-1 ring-primary/30 disabled:opacity-50"
-            >
-              {addNote.isPending && <Loader2 className="h-3 w-3 animate-spin" />}
-              Adicionar nota
-            </button>
-            {notes.length > 0 && (
-              <ul className="space-y-1.5 pt-2">
-                {notes.map((n) => (
-                  <li key={n.id} className="rounded-xl border border-border-soft bg-card/40 p-2.5">
-                    <div className="text-xs leading-relaxed text-foreground/85">{n.body}</div>
-                    <div className="mt-1 text-[10px] text-muted-foreground">{fmtDate(n.created_at)}</div>
-                  </li>
-                ))}
-              </ul>
-            )}
+        {mobile && (
+          <div className="mt-5 flex gap-1 rounded-2xl border border-border-soft bg-card/40 p-1">
+            {mobileTabs.map((t) => {
+              const Icon = t.icon;
+              const active = mTab === t.id;
+              return (
+                <button
+                  key={t.id}
+                  onClick={() => setMTab(t.id)}
+                  className={`flex flex-1 flex-col items-center justify-center gap-0.5 rounded-xl px-1 py-2 text-[10px] font-bold transition ${active ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                  style={active ? { background: "var(--gradient-primary)" } : undefined}
+                >
+                  <Icon className="h-3.5 w-3.5" />
+                  <span>{t.label}</span>
+                </button>
+              );
+            })}
           </div>
-        </Block>
+        )}
+
+        {renderBody(mobile)}
       <ContactFormDialog open={editOpen} onOpenChange={setEditOpen} contact={contact} />
       <AppointmentDialog open={appointmentOpen} onOpenChange={setAppointmentOpen} defaultContactId={contact.id} />
       <FollowupDialog open={followupOpen} onOpenChange={setFollowupOpen} defaultContactId={contact.id} />
@@ -249,12 +315,12 @@ export function ContactPanel({ contactId, onDeleted }: { contactId: string | nul
     <>
       <aside className="hidden w-[400px] shrink-0 xl:block">
         <div className="glass-elevated sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto rounded-[28px] p-5">
-          {inner}
+          {renderInner(false)}
         </div>
       </aside>
       <Sheet open={!!contactId} onOpenChange={(v) => { if (!v) onDeleted?.(); }}>
         <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto p-5 xl:hidden">
-          {inner}
+          {renderInner(true)}
         </SheetContent>
       </Sheet>
     </>
