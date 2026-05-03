@@ -7,7 +7,9 @@ import {
 import { cn } from "@/lib/utils";
 import { CRMMobileBottomNav } from "./CRMMobileBottomNav";
 
-export const navItems = [
+type NavItem = { to: string; icon: any; label: string; exact?: boolean; badge?: number };
+
+export const navItems: NavItem[] = [
   { to: "/", icon: LayoutGrid, label: "Workspace", exact: true },
   { to: "/inbox", icon: Inbox, label: "Inbox", badge: 7 },
   { to: "/pipeline", icon: KanbanSquare, label: "Pipeline" },
@@ -18,7 +20,7 @@ export const navItems = [
   { to: "/perdidos", icon: XCircle, label: "Perdidos" },
   { to: "/automacoes", icon: Zap, label: "Automações" },
   { to: "/relatorios", icon: BarChart3, label: "Relatórios" },
-] as const;
+];
 
 function useActivePath() {
   const path = useRouterState({ select: (s) => s.location.pathname });

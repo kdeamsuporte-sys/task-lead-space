@@ -2,13 +2,14 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { LayoutGrid, Inbox, KanbanSquare, Calendar, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const items = [
+type Item = { to: string; icon: any; label: string; exact?: boolean };
+const items: Item[] = [
   { to: "/", icon: LayoutGrid, label: "Workspace", exact: true },
   { to: "/inbox", icon: Inbox, label: "Inbox" },
   { to: "/pipeline", icon: KanbanSquare, label: "Pipeline" },
   { to: "/agenda", icon: Calendar, label: "Agenda" },
   { to: "/contatos", icon: Users, label: "Contatos" },
-] as const;
+];
 
 export function CRMMobileBottomNav() {
   const path = useRouterState({ select: (s) => s.location.pathname });
