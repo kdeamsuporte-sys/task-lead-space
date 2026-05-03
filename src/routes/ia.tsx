@@ -5,7 +5,7 @@ import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2, Sparkles, Wand2, MessageSquareText, RefreshCw, Save } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/ia")({
@@ -48,12 +48,14 @@ function Page() {
   const [msgOut, setMsgOut] = useState("");
   const [loadingMsg, setLoadingMsg] = useState(false);
 
-  // sync state
-  if (!isLoading && settings && !basePrompt && !nextOut && tone === "profissional") {
-    if (settings.tone) setTone(settings.tone);
-    if (settings.base_prompt) setBasePrompt(settings.base_prompt);
-    if (typeof settings.is_active === "boolean") setActive(settings.is_active);
-  }
+  useEffect(() => {
+    if (settings) {
+      if (settings.tone) setTone(settings.tone);
+      if (settings.base_prompt) setBasePrompt(settings.base_prompt);
+      if (typeof settings.is_active === "boolean") setActive(settings.is_active);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [settings?.id]);
 
   const saveSettings = async () => {
     if (!user) return;
