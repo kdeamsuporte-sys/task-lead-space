@@ -16,7 +16,7 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
       />
       <aside
         className={cn(
-          "lg:hidden fixed inset-y-0 left-0 z-50 w-[280px] overflow-y-auto border-r border-sidebar-border bg-sidebar p-4 transition-transform",
+          "lg:hidden fixed inset-y-0 left-0 z-50 w-[280px] overflow-y-auto glass-strong p-4 transition-transform",
           open ? "translate-x-0" : "-translate-x-full",
         )}
       >
