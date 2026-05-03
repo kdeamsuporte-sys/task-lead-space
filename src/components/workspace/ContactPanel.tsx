@@ -5,6 +5,7 @@ import { useContact, useNotes, useTimeline, useAddNote, useDeleteContact } from 
 import { whatsappLink } from "@/lib/whatsapp";
 import { ContactFormDialog } from "@/components/crm/ContactFormDialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 
 const STAGE_LABEL: Record<string, string> = {
   novo_lead: "Novo lead", aguardando_info: "Aguardando info", orcamento_enviado: "Orçamento enviado",
@@ -88,9 +89,8 @@ export function ContactPanel({ contactId, onDeleted }: { contactId: string | nul
     }
   };
 
-  return (
-    <aside className="hidden w-[400px] shrink-0 xl:block">
-      <div className="glass-elevated sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto rounded-[28px] p-5">
+  const inner = (
+    <>
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 rounded-full border border-primary/25 bg-primary/8 px-3 py-1.5 text-[11px] font-semibold">
@@ -235,9 +235,23 @@ export function ContactPanel({ contactId, onDeleted }: { contactId: string | nul
             )}
           </div>
         </Block>
-      </div>
       <ContactFormDialog open={editOpen} onOpenChange={setEditOpen} contact={contact} />
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      <aside className="hidden w-[400px] shrink-0 xl:block">
+        <div className="glass-elevated sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto rounded-[28px] p-5">
+          {inner}
+        </div>
+      </aside>
+      <Sheet open={!!contactId} onOpenChange={(v) => { if (!v) onDeleted?.(); }}>
+        <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto p-5 xl:hidden">
+          {inner}
+        </SheetContent>
+      </Sheet>
+    </>
   );
 }
 
