@@ -35,6 +35,7 @@ function isActive(path: string, to: string, exact?: boolean) {
 
 function DesktopSidebar() {
   const path = useActivePath();
+  const navigate = useNavigate();
   return (
     <aside className="hidden lg:flex w-[72px] shrink-0 flex-col items-center gap-1 border-r border-sidebar-border bg-sidebar/80 py-5 backdrop-blur-xl sticky top-0 h-screen z-30">
       <Link to="/" className="relative mb-3 flex h-11 w-11 items-center justify-center rounded-2xl text-primary-foreground font-black shadow-[0_10px_30px_-10px_oklch(0.72_0.205_38_/_0.7)]" style={{ background: "var(--gradient-primary)" }}>
@@ -74,13 +75,13 @@ function DesktopSidebar() {
       </nav>
 
       <div className="mt-auto flex flex-col gap-1.5">
-        <button className="flex h-11 w-11 items-center justify-center rounded-xl text-sidebar-foreground/65 hover:bg-sidebar-accent hover:text-foreground">
+        <button onClick={() => navigate({ to: "/automacoes" })} className="flex h-11 w-11 items-center justify-center rounded-xl text-sidebar-foreground/65 hover:bg-sidebar-accent hover:text-foreground">
           <Sparkles className="h-[18px] w-[18px]" />
         </button>
-        <button className="flex h-11 w-11 items-center justify-center rounded-xl text-sidebar-foreground/65 hover:bg-sidebar-accent hover:text-foreground">
+        <button onClick={() => navigate({ to: "/relatorios" })} className="flex h-11 w-11 items-center justify-center rounded-xl text-sidebar-foreground/65 hover:bg-sidebar-accent hover:text-foreground">
           <HelpCircle className="h-[18px] w-[18px]" />
         </button>
-        <button className="flex h-11 w-11 items-center justify-center rounded-xl text-sidebar-foreground/65 hover:bg-sidebar-accent hover:text-foreground">
+        <button onClick={() => navigate({ to: "/contatos" })} className="flex h-11 w-11 items-center justify-center rounded-xl text-sidebar-foreground/65 hover:bg-sidebar-accent hover:text-foreground">
           <Settings className="h-[18px] w-[18px]" />
         </button>
       </div>
