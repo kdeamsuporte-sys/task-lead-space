@@ -287,6 +287,34 @@
   .surface-2 { background-color: var(--surface-2); }
   .surface-3 { background-color: var(--surface-3); }
   .glow-orange { box-shadow: var(--shadow-glow); }
+  .glow-hot {
+    box-shadow:
+      inset 0 1px 0 0 oklch(1 0 0 / 0.05),
+      0 0 0 1px color-mix(in oklab, var(--primary) 25%, transparent),
+      0 14px 38px -16px color-mix(in oklab, var(--primary) 40%, transparent);
+  }
+  .glow-next {
+    position: relative;
+    box-shadow:
+      0 0 0 1px color-mix(in oklab, var(--primary) 45%, transparent),
+      0 0 0 4px color-mix(in oklab, var(--primary) 12%, transparent),
+      0 16px 44px -14px color-mix(in oklab, var(--primary) 55%, transparent);
+    animation: glow-pulse 2.6s ease-in-out infinite;
+  }
+  @keyframes glow-pulse {
+    0%, 100% {
+      box-shadow:
+        0 0 0 1px color-mix(in oklab, var(--primary) 45%, transparent),
+        0 0 0 4px color-mix(in oklab, var(--primary) 10%, transparent),
+        0 16px 44px -14px color-mix(in oklab, var(--primary) 50%, transparent);
+    }
+    50% {
+      box-shadow:
+        0 0 0 1px color-mix(in oklab, var(--primary) 55%, transparent),
+        0 0 0 6px color-mix(in oklab, var(--primary) 16%, transparent),
+        0 20px 56px -14px color-mix(in oklab, var(--primary) 65%, transparent);
+    }
+  }
   .ring-premium {
     box-shadow:
       inset 0 1px 0 0 oklch(1 0 0 / 0.06),
