@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { ArrowUpRight, MessageCircle, FileText, Search, Flame, MapPin, Tag } from "lucide-react";
+import { ArrowUpRight, MessageCircle, FileText, Search, Flame, MapPin, Tag, ArrowDownUp } from "lucide-react";
 import { toast } from "sonner";
 import { usePipeline } from "@/hooks/use-crm";
 import { whatsappLink } from "@/lib/whatsapp";
@@ -15,20 +15,46 @@ const tempMap: Record<string, { label: string; cls: string; dots: number }> = {
 const filters = ["Todos", "Quente", "Morno", "Frio"] as const;
 type Filter = typeof filters[number];
 
+const STAGE_OPTS = [
+  { id: "abertos", label: "Abertos", stages: ["novo_lead","aguardando_info"] },
+  { id: "novo_lead", label: "Novos", stages: ["novo_lead"] },
+  { id: "aguardando_info", label: "Aguardando info", stages: ["aguardando_info"] },
+  { id: "orcamento_enviado", label: "Orçamento", stages: ["orcamento_enviado"] },
+  { id: "followup", label: "Follow-up", stages: ["followup"] },
+  { id: "agendado", label: "Agendado", stages: ["agendado"] },
+] as const;
+type StageId = typeof STAGE_OPTS[number]["id"];
+
+const SORT_OPTS = [
+  { id: "recente", label: "Recência" },
+  { id: "potencial", label: "Potencial" },
+  { id: "temperatura", label: "Temperatura" },
+] as const;
+type SortId = typeof SORT_OPTS[number]["id"];
+
+const TEMP_RANK: Record<string, number> = { quente: 3, morno: 2, frio: 1 };
+
 export function LeadsRow({ onSelect, selected }: { onSelect: (id: string) => void; selected?: string | null }) {
   const { data: all = [] } = usePipeline();
   const [filter, setFilter] = useState<Filter>("Todos");
   const [q, setQ] = useState("");
+  const [stage, setStage] = useState<StageId>("abertos");
+  const [sort, setSort] = useState<SortId>("recente");
 
   const list = useMemo(() => {
-    let l = all.filter((c) => c.stage === "novo_lead" || c.stage === "aguardando_info");
+    const stageDef = STAGE_OPTS.find((s) => s.id === stage)!;
+    let l = all.filter((c) => stageDef.stages.includes(c.stage as any));
     if (filter !== "Todos") l = l.filter((c) => c.temperature === filter.toLowerCase());
     if (q.trim()) {
       const s = q.toLowerCase();
       l = l.filter((c) => c.name.toLowerCase().includes(s) || (c.service ?? "").toLowerCase().includes(s));
     }
-    return l;
-  }, [all, filter, q]);
+    const sorted = [...l];
+    if (sort === "potencial") sorted.sort((a: any, b: any) => (Number(b.potential_value)||0) - (Number(a.potential_value)||0));
+    else if (sort === "temperatura") sorted.sort((a: any, b: any) => (TEMP_RANK[b.temperature]||0) - (TEMP_RANK[a.temperature]||0));
+    else sorted.sort((a: any, b: any) => +new Date(b.last_contact_at || b.created_at) - +new Date(a.last_contact_at || a.created_at));
+    return sorted;
+  }, [all, filter, q, stage, sort]);
 
   return (
     <section>
@@ -47,6 +73,12 @@ export function LeadsRow({ onSelect, selected }: { onSelect: (id: string) => voi
             <Search className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
             <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar…" className="h-9 rounded-full border border-border bg-card/60 pl-8 pr-3 text-xs outline-none focus:border-primary w-44" />
           </div>
+          <div className="relative">
+            <ArrowDownUp className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
+            <select value={sort} onChange={(e) => setSort(e.target.value as SortId)} className="h-9 appearance-none rounded-full border border-border bg-card/60 pl-7 pr-3 text-xs font-semibold outline-none focus:border-primary">
+              {SORT_OPTS.map((o) => <option key={o.id} value={o.id}>{o.label}</option>)}
+            </select>
+          </div>
           <div className="flex gap-1.5">
             {filters.map((f) => (
               <button key={f} onClick={() => setFilter(f)} className={cn("rounded-full border px-3 py-1.5 text-xs font-semibold transition", filter === f ? "border-primary/40 bg-primary/12 text-primary" : "border-border bg-card/60 text-muted-foreground hover:text-foreground")}>
@@ -55,6 +87,14 @@ export function LeadsRow({ onSelect, selected }: { onSelect: (id: string) => voi
             ))}
           </div>
         </div>
+      </div>
+
+      <div className="mb-3 -mx-1 flex gap-1.5 overflow-x-auto no-scrollbar px-1">
+        {STAGE_OPTS.map((s) => (
+          <button key={s.id} onClick={() => setStage(s.id)} className={cn("shrink-0 rounded-full border px-3 py-1 text-[11px] font-bold transition", stage === s.id ? "border-primary/40 bg-primary/12 text-primary" : "border-border-soft bg-card/40 text-muted-foreground hover:text-foreground")}>
+            {s.label}
+          </button>
+        ))}
       </div>
 
       {list.length === 0 ? (
