@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
   LayoutGrid, Inbox, KanbanSquare, Users, RotateCcw, FileText, Calendar, XCircle,
   Zap, BarChart3, Settings, Sparkles, HelpCircle, Menu, X, Plus, MessageCircle, Bell, Search, ChevronDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CRMMobileBottomNav } from "./CRMMobileBottomNav";
+import { ContactFormDialog } from "./ContactFormDialog";
 
 type NavItem = { to: string; icon: any; label: string; exact?: boolean; badge?: number };
 
@@ -143,45 +144,51 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
 }
 
 export function CRMTopBar({ onOpenMenu }: { onOpenMenu: () => void }) {
+  const navigate = useNavigate();
+  const [createOpen, setCreateOpen] = useState(false);
   return (
-    <header className="flex flex-wrap items-center gap-2.5">
-      <button onClick={onOpenMenu} className="lg:hidden flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card/70">
-        <Menu className="h-4 w-4" />
-      </button>
-      <div className="flex items-center gap-2 rounded-full border border-success/25 bg-success/8 px-3 py-1.5 text-[11px] font-medium text-success">
-        <span className="h-1.5 w-1.5 rounded-full bg-success pulse-dot" />
-        <span className="hidden sm:inline">Online · sincronizado</span>
-        <span className="sm:hidden">Online</span>
-      </div>
-      <div className="ml-1 hidden items-center gap-2 rounded-full border border-border bg-card/70 px-3 py-1.5 backdrop-blur-md md:flex">
-        <Search className="h-3.5 w-3.5 text-muted-foreground" />
-        <input
-          placeholder="Buscar contato, telefone, orçamento…"
-          className="w-72 bg-transparent text-xs outline-none placeholder:text-muted-foreground"
-        />
-        <kbd className="rounded-md border border-border bg-background/60 px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground">⌘K</kbd>
-      </div>
-
-      <div className="ml-auto flex items-center gap-2">
-        <button className="hidden items-center gap-1.5 rounded-full border border-success/30 bg-success/12 px-3 py-1.5 text-xs font-bold text-success transition hover:bg-success/20 md:inline-flex">
-          <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
+    <>
+      <header className="flex flex-wrap items-center gap-2.5">
+        <button onClick={onOpenMenu} className="lg:hidden flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card/70">
+          <Menu className="h-4 w-4" />
         </button>
+        <div className="flex items-center gap-2 rounded-full border border-success/25 bg-success/8 px-3 py-1.5 text-[11px] font-medium text-success">
+          <span className="h-1.5 w-1.5 rounded-full bg-success pulse-dot" />
+          <span className="hidden sm:inline">Online · sincronizado</span>
+          <span className="sm:hidden">Online</span>
+        </div>
         <button
-          className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold text-primary-foreground shadow-[0_10px_30px_-10px_oklch(0.72_0.205_38_/_0.7)] transition hover:brightness-110"
-          style={{ background: "var(--gradient-primary)" }}
+          onClick={() => navigate({ to: "/contatos" })}
+          className="ml-1 hidden items-center gap-2 rounded-full border border-border bg-card/70 px-3 py-1.5 text-left backdrop-blur-md transition hover:border-primary/30 hover:bg-card md:flex"
         >
-          <Plus className="h-3.5 w-3.5" /> <span className="hidden sm:inline">Novo contato</span><span className="sm:hidden">Novo</span>
+          <Search className="h-3.5 w-3.5 text-muted-foreground" />
+          <span className="w-72 text-xs text-muted-foreground">Buscar contato, telefone, orçamento…</span>
+          <kbd className="rounded-md border border-border bg-background/60 px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground">⌘K</kbd>
         </button>
-        <button className="relative flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card/70 text-muted-foreground hover:text-foreground">
-          <Bell className="h-4 w-4" />
-          <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-primary pulse-dot" />
-        </button>
-        <button className="hidden md:flex items-center gap-2 rounded-full border border-border bg-card/70 py-1 pl-1 pr-2.5">
-          <div className="flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-black text-primary-foreground" style={{ background: "var(--gradient-primary)" }}>JV</div>
-          <ChevronDown className="h-3 w-3 text-muted-foreground" />
-        </button>
-      </div>
-    </header>
+
+        <div className="ml-auto flex items-center gap-2">
+          <button onClick={() => navigate({ to: "/inbox" })} className="hidden items-center gap-1.5 rounded-full border border-success/30 bg-success/12 px-3 py-1.5 text-xs font-bold text-success transition hover:bg-success/20 md:inline-flex">
+            <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
+          </button>
+          <button
+            onClick={() => setCreateOpen(true)}
+            className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold text-primary-foreground shadow-[0_10px_30px_-10px_oklch(0.72_0.205_38_/_0.7)] transition hover:brightness-110"
+            style={{ background: "var(--gradient-primary)" }}
+          >
+            <Plus className="h-3.5 w-3.5" /> <span className="hidden sm:inline">Novo contato</span><span className="sm:hidden">Novo</span>
+          </button>
+          <button onClick={() => navigate({ to: "/retornos" })} className="relative flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card/70 text-muted-foreground hover:text-foreground">
+            <Bell className="h-4 w-4" />
+            <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-primary pulse-dot" />
+          </button>
+          <button onClick={() => navigate({ to: "/contatos" })} className="hidden md:flex items-center gap-2 rounded-full border border-border bg-card/70 py-1 pl-1 pr-2.5">
+            <div className="flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-black text-primary-foreground" style={{ background: "var(--gradient-primary)" }}>JV</div>
+            <ChevronDown className="h-3 w-3 text-muted-foreground" />
+          </button>
+        </div>
+      </header>
+      <ContactFormDialog open={createOpen} onOpenChange={setCreateOpen} />
+    </>
   );
 }
 
