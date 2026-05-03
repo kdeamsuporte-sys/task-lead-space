@@ -1,5 +1,5 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/lib/auth-context";
@@ -72,10 +72,12 @@ function RootComponent() {
   const [client] = useState(() => new QueryClient({
     defaultOptions: { queries: { staleTime: 30_000, refetchOnWindowFocus: false } },
   }));
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
   return (
     <QueryClientProvider client={client}>
       <AuthProvider>
-        <Outlet />
+        {mounted ? <Outlet /> : <div className="min-h-screen bg-background" />}
         <Toaster />
       </AuthProvider>
     </QueryClientProvider>
