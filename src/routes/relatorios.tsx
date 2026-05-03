@@ -2,74 +2,61 @@ import { createFileRoute } from "@tanstack/react-router";
 import { CRMLayout } from "@/components/crm/CRMLayout";
 import { CRMPageHeader } from "@/components/crm/CRMPageHeader";
 import { CRMMetricCard } from "@/components/crm/CRMMetricCard";
-import { reports } from "@/components/workspace/data";
-import { TrendingUp, MessageCircle, Send, Award, Coins, XCircle, Clock, Sparkles } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useReports } from "@/hooks/use-crm";
+import { fmtMoney } from "@/lib/format";
+import { TrendingUp, Send, Award, Coins, XCircle, Flame } from "lucide-react";
 
 export const Route = createFileRoute("/relatorios")({
-  head: () => ({
-    meta: [
-      { title: "Relatórios — ALTUM CRM" },
-      { name: "description", content: "Performance comercial: leads, conversão, valor vendido e funil." },
-    ],
-  }),
+  head: () => ({ meta: [{ title: "Relatórios — ALTUM CRM" }] }),
   component: RelatoriosPage,
 });
 
-const iconMap: any = { leads_recv: TrendingUp, resp_rate: MessageCircle, budgets_sent: Send, close_rate: Award, sold: Coins, lost_value: XCircle, avg_resp: Clock, top_channel: Sparkles };
-
 function RelatoriosPage() {
+  const { data, isLoading } = useReports();
+  if (isLoading || !data) return <CRMLayout><div className="p-4 text-sm text-muted-foreground">Carregando…</div></CRMLayout>;
+  const t = data.totals;
+
   return (
     <CRMLayout>
       <div className="space-y-6">
-        <CRMPageHeader
-          eyebrow="Performance comercial"
-          title="Relatórios"
-          description="Como sua operação comercial está performando, com clareza."
-        />
-
+        <CRMPageHeader eyebrow="Performance" title="Relatórios" description="Como sua operação está performando." />
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-          {reports.metrics.map((m) => (
-            <CRMMetricCard key={m.id} icon={iconMap[m.id]} label={m.label} value={m.value} delta={m.delta} hint="Últimos 30 dias" tone={m.tone as any} />
-          ))}
+          <CRMMetricCard icon={TrendingUp} label="Leads" value={t.leads} hint="Total" tone="primary" />
+          <CRMMetricCard icon={Send} label="Orçamentos" value={t.orcEnviados} hint="Enviados" tone="info" />
+          <CRMMetricCard icon={Award} label="Aceitos" value={t.aceitos} hint={`${t.closeRate}% close`} tone="success" />
+          <CRMMetricCard icon={Coins} label="Vendido" value={fmtMoney(t.valorVendido)} hint="Valor" tone="primary" />
+          <CRMMetricCard icon={XCircle} label="Perdido" value={fmtMoney(t.valorPerdido)} hint="Valor" tone="danger" />
+          <CRMMetricCard icon={Flame} label="Quentes" value={t.quentes} hint="Ativos" tone="warning" />
         </div>
 
         <div className="grid gap-4 lg:grid-cols-2">
-          {/* Funnel */}
           <section className="glass-card rounded-3xl p-4 sm:p-5">
             <div className="mb-4">
-              <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.18em] text-primary/80">Funil comercial</div>
-              <h3 className="mt-1 text-base sm:text-lg font-bold">Conversão por etapa</h3>
+              <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary/80">Funil</div>
+              <h3 className="mt-1 text-base font-bold">Conversão por etapa</h3>
             </div>
             <div className="space-y-2">
-              {reports.funnel.map((f, i) => (
-                <div key={f.stage} className="relative">
-                  <div
-                    className="relative flex items-center justify-between gap-2 overflow-hidden rounded-xl border border-primary/20 px-3 sm:px-4 py-2.5 sm:py-3"
-                    style={{
-                      width: `${100 - i * 4}%`,
-                      background: `linear-gradient(90deg, oklch(0.72 0.205 38 / ${0.18 - i * 0.025}), oklch(0.72 0.205 38 / ${0.05}))`,
-                    }}
-                  >
-                    <span className="truncate text-xs sm:text-sm font-bold">{f.stage}</span>
-                    <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-                      <span className="text-xs font-bold tabular-nums text-foreground/80">{f.value}</span>
-                      <span className="rounded-full bg-background/50 px-2 py-0.5 text-[10px] font-bold text-primary">{f.pct}%</span>
-                    </div>
+              {data.funnel.map((f: any, i: number) => (
+                <div key={f.stage} className="relative flex items-center justify-between gap-2 overflow-hidden rounded-xl border border-primary/20 px-3 py-2.5"
+                  style={{ width: `${100 - i * 4}%`, background: `linear-gradient(90deg, oklch(0.72 0.205 38 / ${0.18 - i * 0.025}), oklch(0.72 0.205 38 / 0.05))` }}>
+                  <span className="truncate text-xs font-bold">{f.stage}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold tabular-nums">{f.value}</span>
+                    <span className="rounded-full bg-background/50 px-2 py-0.5 text-[10px] font-bold text-primary">{f.pct}%</span>
                   </div>
                 </div>
               ))}
             </div>
           </section>
 
-          {/* Origins */}
           <section className="glass-card rounded-3xl p-4 sm:p-5">
             <div className="mb-4">
-              <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.18em] text-primary/80">Origem dos leads</div>
-              <h3 className="mt-1 text-base sm:text-lg font-bold">Canal que mais converte</h3>
+              <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary/80">Origens</div>
+              <h3 className="mt-1 text-base font-bold">Canais</h3>
             </div>
             <div className="space-y-3">
-              {reports.origins.map((o) => (
+              {data.origins.length === 0 && <div className="text-xs text-muted-foreground">Sem dados</div>}
+              {data.origins.map((o: any) => (
                 <div key={o.label}>
                   <div className="flex items-center justify-between text-xs">
                     <span className="font-semibold">{o.label}</span>
@@ -83,23 +70,16 @@ function RelatoriosPage() {
             </div>
           </section>
 
-          {/* Lost reasons */}
           <section className="glass-card rounded-3xl p-4 sm:p-5 lg:col-span-2">
-            <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
-              <div>
-                <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.18em] text-primary/80">Motivos de perda</div>
-                <h3 className="mt-1 text-base sm:text-lg font-bold">Por que estamos perdendo?</h3>
-              </div>
-              <span className="text-[11px] sm:text-xs text-muted-foreground">% das oportunidades perdidas</span>
+            <div className="mb-4">
+              <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary/80">Motivos de perda</div>
+              <h3 className="mt-1 text-base font-bold">O que está fazendo perder vendas</h3>
             </div>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-5">
-              {reports.lostReasons.map((r) => (
-                <div key={r.label} className="rounded-2xl border border-border-soft bg-background/40 p-3">
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{r.label}</div>
-                  <div className={cn("mt-1 text-xl sm:text-2xl font-black tabular-nums", r.pct >= 30 ? "text-destructive" : r.pct >= 15 ? "text-warning" : "text-foreground")}>{r.pct}%</div>
-                  <div className="mt-2 h-1 rounded-full bg-secondary">
-                    <div className={cn("h-full rounded-full", r.pct >= 30 ? "bg-destructive" : r.pct >= 15 ? "bg-warning" : "bg-foreground/40")} style={{ width: `${r.pct}%` }} />
-                  </div>
+            <div className="grid gap-2 md:grid-cols-2">
+              {data.lostReasons.length === 0 && <div className="text-xs text-muted-foreground">Sem dados</div>}
+              {data.lostReasons.map((r: any) => (
+                <div key={r.label} className="rounded-xl border border-border-soft bg-background/40 p-3">
+                  <div className="flex justify-between text-xs"><span className="font-bold truncate">{r.label}</span><span className="text-destructive font-bold">{r.pct}%</span></div>
                 </div>
               ))}
             </div>

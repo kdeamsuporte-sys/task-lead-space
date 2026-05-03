@@ -1,31 +1,37 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import { toast } from "sonner";
 import { CRMLayout } from "@/components/crm/CRMLayout";
 import { CRMPageHeader } from "@/components/crm/CRMPageHeader";
 import { CRMFilterChips } from "@/components/crm/CRMFilterChips";
 import { CRMStatusBadge } from "@/components/crm/CRMStatusBadge";
 import { CRMEmptyState } from "@/components/crm/CRMEmptyState";
 import { CRMMetricCard } from "@/components/crm/CRMMetricCard";
-import { retornos, leads } from "@/components/workspace/data";
-import { MessageCircle, RotateCcw, Check, Calendar, AlertTriangle, Clock, CalendarClock } from "lucide-react";
+import { FollowupDialog } from "@/components/crm/FollowupDialog";
+import { useFollowups, useCompleteFollowup, useDeleteFollowup } from "@/hooks/use-crm";
+import { whatsappLink } from "@/lib/whatsapp";
+import { initials, fmtDate } from "@/lib/format";
+import { MessageCircle, RotateCcw, Check, Calendar, AlertTriangle, Clock, CalendarClock, Plus, Trash2, Pencil } from "lucide-react";
 
 export const Route = createFileRoute("/retornos")({
-  head: () => ({
-    meta: [
-      { title: "Retornos — ALTUM CRM" },
-      { name: "description", content: "Acompanhe retornos pendentes, atrasados e reagendamentos." },
-    ],
-  }),
+  head: () => ({ meta: [{ title: "Retornos — ALTUM CRM" }, { name: "description", content: "Acompanhe retornos pendentes." }] }),
   component: RetornosPage,
 });
 
-const filters = ["Hoje", "Atrasados", "Próximos 7 dias", "Sem data", "Concluídos"];
+const filters = ["Todos", "Hoje", "Atrasados", "Próximos 7 dias", "Sem data", "Concluídos"];
+const map: Record<string, any> = { Todos: "todos", Hoje: "hoje", Atrasados: "atrasado", "Próximos 7 dias": "futuro", "Sem data": "sem_data", Concluídos: "concluido" };
 
 function RetornosPage() {
   const [f, setF] = useState("Hoje");
+  const [dlg, setDlg] = useState<{ open: boolean; initial: any }>({ open: false, initial: null });
+  const { data: list = [], isLoading } = useFollowups(map[f]);
+  const { data: hojeData = [] } = useFollowups("hoje");
+  const { data: atrasadoData = [] } = useFollowups("atrasado");
+  const { data: futuroData = [] } = useFollowups("futuro");
+  const { data: concluidoData = [] } = useFollowups("concluido");
 
-  const map: Record<string, string> = { Hoje: "hoje", Atrasados: "atrasado", "Próximos 7 dias": "futuro", "Sem data": "sem-data", Concluídos: "concluido" };
-  const list = retornos.filter((r) => r.status === map[f]);
+  const complete = useCompleteFollowup();
+  const del = useDeleteFollowup();
 
   return (
     <CRMLayout>
@@ -33,57 +39,72 @@ function RetornosPage() {
         <CRMPageHeader
           eyebrow="Não esqueça ninguém"
           title="Retornos"
-          description="Acompanhe retornos pendentes, atrasados e reagendamentos. WhatsApp em 1 clique."
+          description="Pendentes, atrasados e reagendamentos. WhatsApp em 1 clique."
+          actions={
+            <button onClick={() => setDlg({ open: true, initial: null })} className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold text-primary-foreground" style={{ background: "var(--gradient-primary)" }}>
+              <Plus className="h-3.5 w-3.5" /> Novo retorno
+            </button>
+          }
         />
 
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-          <CRMMetricCard icon={Clock} label="Hoje" value={retornos.filter((r) => r.status === "hoje").length} hint="Para hoje" tone="primary" />
-          <CRMMetricCard icon={AlertTriangle} label="Atrasados" value={retornos.filter((r) => r.status === "atrasado").length} hint="Precisam de ação" tone="danger" />
-          <CRMMetricCard icon={CalendarClock} label="Próximos 7 dias" value={retornos.filter((r) => r.status === "futuro").length} hint="Programados" tone="info" />
-          <CRMMetricCard icon={Check} label="Concluídos" value={12} hint="Esta semana" tone="success" />
+          <CRMMetricCard icon={Clock} label="Hoje" value={hojeData.length} hint="Para hoje" tone="primary" />
+          <CRMMetricCard icon={AlertTriangle} label="Atrasados" value={atrasadoData.length} hint="Precisam de ação" tone="danger" />
+          <CRMMetricCard icon={CalendarClock} label="Próximos 7 dias" value={futuroData.length} hint="Programados" tone="info" />
+          <CRMMetricCard icon={Check} label="Concluídos" value={concluidoData.length} hint="Total" tone="success" />
         </div>
 
         <CRMFilterChips options={filters} value={f} onChange={setF} />
 
-        {list.length === 0 ? (
-          <CRMEmptyState icon={Check} title="Você está em dia." description="Nenhum retorno nessa categoria. Aproveite para fazer follow-up ativo dos seus quentes." />
+        {isLoading ? <div className="text-sm text-muted-foreground">Carregando…</div> : list.length === 0 ? (
+          <CRMEmptyState icon={Check} title="Você está em dia." description="Nenhum retorno nessa categoria." />
         ) : (
           <div className="grid gap-3 md:grid-cols-2">
-            {list.map((r) => {
-              const lead = leads.find((l) => l.id === r.leadId)!;
-              const tone = r.status === "atrasado" ? "danger" : r.status === "hoje" ? "primary" : r.status === "concluido" ? "success" : "info";
+            {list.map((r: any) => {
+              const c = r.contact;
+              const phone = c?.phone;
+              const onWa = () => {
+                const link = whatsappLink(phone, c?.name ? `Olá ${c.name.split(" ")[0]}, tudo bem?` : "");
+                if (!link) return toast.error("Sem telefone válido");
+                window.open(link, "_blank");
+              };
+              const tone = !r.scheduled_at ? "info" : new Date(r.scheduled_at) < new Date() && r.status === "pendente" ? "danger" : r.status === "concluido" ? "success" : "primary";
               return (
-                <article key={r.id} className="glass-card ring-premium rounded-2xl p-3 sm:p-4 transition hover:-translate-y-0.5 hover:border-primary/40">
+                <article key={r.id} className="glass-card ring-premium rounded-2xl p-3 sm:p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/30 to-primary/5 text-sm font-black text-primary ring-1 ring-primary/30">{lead.initials}</div>
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/30 to-primary/5 text-sm font-black text-primary ring-1 ring-primary/30">{initials(c?.name)}</div>
                       <div className="min-w-0">
-                        <div className="truncate text-sm font-bold leading-tight">{lead.name}</div>
-                        <div className="text-[11px] text-muted-foreground">{lead.phone}</div>
+                        <div className="truncate text-sm font-bold leading-tight">{c?.name ?? "Sem contato"}</div>
+                        <div className="text-[11px] text-muted-foreground">{phone ?? ""}</div>
                       </div>
                     </div>
-                    <CRMStatusBadge tone={tone}>{f}</CRMStatusBadge>
+                    <CRMStatusBadge tone={tone}>{r.status === "concluido" ? "Concluído" : r.status === "cancelado" ? "Cancelado" : "Pendente"}</CRMStatusBadge>
                   </div>
 
-                  <div className="mt-3 rounded-xl border border-border-soft bg-background/40 p-3">
-                    <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Motivo</div>
-                    <div className="mt-0.5 text-xs font-semibold">{r.reason}</div>
-                  </div>
+                  {r.reason && (
+                    <div className="mt-3 rounded-xl border border-border-soft bg-background/40 p-3">
+                      <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Motivo</div>
+                      <div className="mt-0.5 text-xs font-semibold">{r.reason}</div>
+                    </div>
+                  )}
 
                   <div className="mt-2 flex flex-wrap items-center gap-1.5">
-                    <CRMStatusBadge tone="info" icon={Calendar}>{r.due}</CRMStatusBadge>
-                    <CRMStatusBadge tone={r.priority === "alta" ? "danger" : r.priority === "media" ? "warning" : "neutral"}>
-                      {r.priority === "alta" ? "Alta prioridade" : r.priority === "media" ? "Média" : "Baixa"}
+                    <CRMStatusBadge tone="info" icon={Calendar}>{fmtDate(r.scheduled_at)}</CRMStatusBadge>
+                    <CRMStatusBadge tone={r.priority === "alta" || r.priority === "urgente" ? "danger" : r.priority === "media" ? "warning" : "neutral"}>
+                      {r.priority}
                     </CRMStatusBadge>
-                    <CRMStatusBadge tone="neutral">{lead.stage}</CRMStatusBadge>
                   </div>
 
                   <div className="mt-4 flex flex-wrap items-center gap-2">
-                    <button className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-success/15 px-3 py-2 text-xs font-bold text-success ring-1 ring-success/30 hover:bg-success/25 min-h-[44px]">
+                    <button onClick={onWa} className="flex flex-1 min-w-[120px] items-center justify-center gap-1.5 rounded-lg bg-success/15 px-3 py-2 text-xs font-bold text-success ring-1 ring-success/30 hover:bg-success/25 min-h-[40px]">
                       <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
                     </button>
-                    <button className="flex items-center justify-center gap-1.5 rounded-lg border border-border bg-background/60 px-3 py-2 text-xs font-bold min-h-[44px]"><Check className="h-3.5 w-3.5" /> Concluir</button>
-                    <button className="flex items-center justify-center gap-1.5 rounded-lg border border-border bg-background/60 px-3 py-2 text-xs font-bold min-h-[44px]"><RotateCcw className="h-3.5 w-3.5" /> Reagendar</button>
+                    {r.status !== "concluido" && (
+                      <button onClick={async () => { try { await complete.mutateAsync(r.id); toast.success("Concluído"); } catch (e:any) { toast.error(e?.message); } }} className="flex items-center justify-center gap-1.5 rounded-lg border border-border bg-background/60 px-3 py-2 text-xs font-bold min-h-[40px]"><Check className="h-3.5 w-3.5" /> Concluir</button>
+                    )}
+                    <button onClick={() => setDlg({ open: true, initial: r })} className="flex items-center justify-center gap-1.5 rounded-lg border border-border bg-background/60 px-3 py-2 text-xs font-bold min-h-[40px]"><Pencil className="h-3.5 w-3.5" /></button>
+                    <button onClick={async () => { if (confirm("Remover este retorno?")) { try { await del.mutateAsync(r.id); toast.success("Removido"); } catch(e:any){ toast.error(e?.message); } } }} className="flex items-center justify-center gap-1.5 rounded-lg border border-border bg-background/60 px-3 py-2 text-xs font-bold text-destructive min-h-[40px]"><Trash2 className="h-3.5 w-3.5" /></button>
                   </div>
                 </article>
               );
@@ -91,6 +112,7 @@ function RetornosPage() {
           </div>
         )}
       </div>
+      <FollowupDialog open={dlg.open} onOpenChange={(v) => setDlg({ open: v, initial: null })} initial={dlg.initial} />
     </CRMLayout>
   );
 }
