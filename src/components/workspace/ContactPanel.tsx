@@ -4,6 +4,8 @@ import { toast } from "sonner";
 import { useContact, useNotes, useTimeline, useAddNote, useDeleteContact } from "@/hooks/use-contacts";
 import { whatsappLink } from "@/lib/whatsapp";
 import { ContactFormDialog } from "@/components/crm/ContactFormDialog";
+import { AppointmentDialog } from "@/components/crm/AppointmentDialog";
+import { FollowupDialog } from "@/components/crm/FollowupDialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 
@@ -36,6 +38,8 @@ export function ContactPanel({ contactId, onDeleted }: { contactId: string | nul
   const addNote = useAddNote();
   const del = useDeleteContact();
   const [editOpen, setEditOpen] = useState(false);
+  const [appointmentOpen, setAppointmentOpen] = useState(false);
+  const [followupOpen, setFollowupOpen] = useState(false);
   const [noteText, setNoteText] = useState("");
 
   if (!contactId) {
@@ -171,10 +175,10 @@ export function ContactPanel({ contactId, onDeleted }: { contactId: string | nul
           <button onClick={() => setEditOpen(true)} className="flex items-center justify-center gap-1.5 rounded-xl border border-border bg-card/70 py-2.5 text-xs font-bold hover:border-primary/30 hover:bg-card">
             <Pencil className="h-3.5 w-3.5" /> Editar
           </button>
-          <button disabled className="flex items-center justify-center gap-1.5 rounded-xl border border-border bg-card/40 py-2.5 text-xs font-bold text-muted-foreground" title="Em breve">
+          <button onClick={() => setAppointmentOpen(true)} className="flex items-center justify-center gap-1.5 rounded-xl border border-border bg-card/70 py-2.5 text-xs font-bold hover:border-primary/30 hover:bg-card">
             <Calendar className="h-3.5 w-3.5" /> Agendar
           </button>
-          <button disabled className="flex items-center justify-center gap-1.5 rounded-xl border border-border bg-card/40 py-2.5 text-xs font-bold text-muted-foreground" title="Em breve">
+          <button onClick={() => setFollowupOpen(true)} className="flex items-center justify-center gap-1.5 rounded-xl border border-border bg-card/70 py-2.5 text-xs font-bold hover:border-primary/30 hover:bg-card">
             <RotateCcw className="h-3.5 w-3.5" /> Retorno
           </button>
           <button onClick={() => document.getElementById("note-input")?.focus()} className="flex items-center justify-center gap-1.5 rounded-xl border border-border bg-card/70 py-2.5 text-xs font-bold hover:border-primary/30 hover:bg-card">
@@ -236,6 +240,8 @@ export function ContactPanel({ contactId, onDeleted }: { contactId: string | nul
           </div>
         </Block>
       <ContactFormDialog open={editOpen} onOpenChange={setEditOpen} contact={contact} />
+      <AppointmentDialog open={appointmentOpen} onOpenChange={setAppointmentOpen} defaultContactId={contact.id} />
+      <FollowupDialog open={followupOpen} onOpenChange={setFollowupOpen} defaultContactId={contact.id} />
     </>
   );
 
