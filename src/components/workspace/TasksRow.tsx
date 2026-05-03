@@ -1,10 +1,22 @@
-import { useState, useMemo } from "react";
-import { MessageCircle, FileText, CheckCircle2, Trash2, Plus, Clock, MoreHorizontal, ChevronDown } from "lucide-react";
+import { useState, useMemo, useEffect, createContext, useContext } from "react";
+import { MessageCircle, FileText, CheckCircle2, Trash2, Plus, Clock, MoreHorizontal, ChevronDown, GripVertical } from "lucide-react";
 import { toast } from "sonner";
-import { useTasks, useToggleTask, useDeleteTask } from "@/hooks/use-crm";
+import { useTasks, useToggleTask, useDeleteTask, useReorderTasks } from "@/hooks/use-crm";
 import { TaskDialog } from "@/components/crm/TaskDialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import {
+  DndContext,
+  PointerSensor,
+  TouchSensor,
+  KeyboardSensor,
+  useSensor,
+  useSensors,
+  closestCenter,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import { SortableContext, useSortable, arrayMove, verticalListSortingStrategy, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 const filters = ["todas", "hoje", "atrasadas", "concluidas"] as const;
 const labels: Record<typeof filters[number], string> = { todas: "Todas", hoje: "Hoje", atrasadas: "Atrasadas", concluidas: "Concluídas" };
@@ -31,33 +43,80 @@ function bucketOf(t: any): Group {
 export function TasksRow({ onSelect }: { onSelect?: (id: string) => void }) {
   const [filter, setFilter] = useState<typeof filters[number]>("todas");
   const [dlg, setDlg] = useState<{ open: boolean; initial: any }>({ open: false, initial: null });
-  const [collapsed, setCollapsed] = useState<Record<Group, boolean>>({ atrasadas: false, hoje: false, proximas: false, concluidas: true });
+  // All groups start collapsed — user opens what they want
+  const [collapsed, setCollapsed] = useState<Record<Group, boolean>>({ atrasadas: true, hoje: true, proximas: true, concluidas: true });
   const { data: list = [] } = useTasks(filter);
   const toggle = useToggleTask();
   const del = useDeleteTask();
+  const reorder = useReorderTasks();
+
+  // Local mirror to support optimistic drag reordering
+  const [items, setItems] = useState<any[]>(list);
+  useEffect(() => { setItems(list); }, [list]);
 
   const grouped = useMemo(() => {
     const g: Record<Group, any[]> = { atrasadas: [], hoje: [], proximas: [], concluidas: [] };
-    for (const t of list) g[bucketOf(t)].push(t);
+    for (const t of items) g[bucketOf(t)].push(t);
     return g;
-  }, [list]);
+  }, [items]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 180, tolerance: 6 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  const handleDragEnd = (group: Group) => (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const groupItems = grouped[group];
+    const oldIndex = groupItems.findIndex((i) => i.id === active.id);
+    const newIndex = groupItems.findIndex((i) => i.id === over.id);
+    if (oldIndex < 0 || newIndex < 0) return;
+    const reordered = arrayMove(groupItems, oldIndex, newIndex);
+    // Build new global order by replacing this group's items in their original positions
+    const newItems: any[] = [];
+    let idx = 0;
+    for (const it of items) {
+      if (bucketOf(it) === group) {
+        newItems.push(reordered[idx++]);
+      } else {
+        newItems.push(it);
+      }
+    }
+    setItems(newItems);
+    // Persist sort_order for the moved group's items (renumber from 1)
+    const updates = reordered.map((it, i) => ({ id: it.id, sort_order: i + 1 }));
+    reorder.mutate(updates, {
+      onError: (e: any) => { toast.error(e?.message || "Falha ao reordenar"); setItems(list); },
+    });
+  };
 
   const handleDelete = async (id: string) => {
     if (!confirm("Excluir tarefa?")) return;
     try { await del.mutateAsync(id); toast.success("Removida"); } catch (e: any) { toast.error(e?.message); }
   };
 
-  const renderRow = (t: any) => {
+  const renderRow = (t: any, draggable = false) => {
     const overdue = t.due_at && new Date(t.due_at) < new Date() && t.status === "pendente";
     return (
-      <article
+      <SortableTaskRow
         key={t.id}
+        id={t.id}
+        draggable={draggable}
+      >
+      <article
         className={cn(
           "glass-card group relative flex items-center gap-2.5 rounded-xl border-l-[3px] px-2.5 py-2 sm:px-3 sm:py-2.5 transition",
           priorityMap[t.priority] ?? "border-l-border",
           t.status === "concluida" && "opacity-60"
         )}
       >
+        {draggable && (
+          <SortableHandle>
+            <GripVertical className="h-4 w-4" />
+          </SortableHandle>
+        )}
         <button
           onClick={(e) => { e.stopPropagation(); toggle.mutate({ id: t.id, status: t.status === "concluida" ? "pendente" : "concluida" }); }}
           className={cn(
@@ -107,6 +166,7 @@ export function TasksRow({ onSelect }: { onSelect?: (id: string) => void }) {
           </DropdownMenuContent>
         </DropdownMenu>
       </article>
+      </SortableTaskRow>
     );
   };
 
@@ -154,21 +214,80 @@ export function TasksRow({ onSelect }: { onSelect?: (id: string) => void }) {
                   <span className="rounded-full bg-secondary px-1.5 py-0.5 text-[10px] font-semibold text-foreground/70">{items.length}</span>
                 </button>
                 {!isCollapsed && (
-                  <div className="grid grid-cols-1 gap-1.5 md:grid-cols-2 xl:grid-cols-3">
-                    {items.map(renderRow)}
-                  </div>
+                  <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd(g)}>
+                    <SortableContext items={items.map((i) => i.id)} strategy={verticalListSortingStrategy}>
+                      <div className="grid grid-cols-1 gap-1.5 md:grid-cols-2 xl:grid-cols-3">
+                        {items.map((t) => renderRow(t, true))}
+                      </div>
+                    </SortableContext>
+                  </DndContext>
                 )}
               </div>
             );
           })}
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-1.5 md:grid-cols-2 xl:grid-cols-3">
-          {list.map(renderRow)}
-        </div>
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(event) => {
+          const { active, over } = event;
+          if (!over || active.id === over.id) return;
+          const oldIndex = items.findIndex((i) => i.id === active.id);
+          const newIndex = items.findIndex((i) => i.id === over.id);
+          if (oldIndex < 0 || newIndex < 0) return;
+          const reordered = arrayMove(items, oldIndex, newIndex);
+          setItems(reordered);
+          reorder.mutate(reordered.map((it, i) => ({ id: it.id, sort_order: i + 1 })), {
+            onError: (e: any) => { toast.error(e?.message || "Falha ao reordenar"); setItems(list); },
+          });
+        }}>
+          <SortableContext items={items.map((i) => i.id)} strategy={verticalListSortingStrategy}>
+            <div className="grid grid-cols-1 gap-1.5 md:grid-cols-2 xl:grid-cols-3">
+              {items.map((t) => renderRow(t, true))}
+            </div>
+          </SortableContext>
+        </DndContext>
       )}
 
       <TaskDialog open={dlg.open} onOpenChange={(v) => setDlg({ open: v, initial: null })} initial={dlg.initial} />
     </section>
+  );
+}
+
+/* ============ Sortable wrappers ============ */
+
+type SortableCtx = { listeners: any; setActivatorNodeRef: (el: HTMLElement | null) => void } | null;
+const SortableHandleContext = createContext<SortableCtx>(null);
+
+function SortableTaskRow({ id, draggable, children }: { id: string; draggable: boolean; children: React.ReactNode }) {
+  const sortable = useSortable({ id, disabled: !draggable });
+  if (!draggable) return <>{children}</>;
+  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = sortable;
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 30 : undefined,
+    opacity: isDragging ? 0.85 : 1,
+  };
+  return (
+    <div ref={setNodeRef} style={style} {...attributes}>
+      <SortableHandleContext.Provider value={{ listeners, setActivatorNodeRef }}>
+        {children}
+      </SortableHandleContext.Provider>
+    </div>
+  );
+}
+
+function SortableHandle({ children }: { children: React.ReactNode }) {
+  const ctx = useContext(SortableHandleContext);
+  if (!ctx) return null;
+  return (
+    <button
+      ref={ctx.setActivatorNodeRef}
+      {...ctx.listeners}
+      className="flex h-8 w-6 shrink-0 cursor-grab items-center justify-center rounded-md text-muted-foreground hover:bg-secondary hover:text-foreground active:cursor-grabbing touch-none"
+      aria-label="Arrastar para reordenar"
+      onClick={(e) => e.preventDefault()}
+    >
+      {children}
+    </button>
   );
 }
